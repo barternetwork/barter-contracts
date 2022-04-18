@@ -1,5 +1,3 @@
-
-
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.6.12;
@@ -8,7 +6,7 @@ pragma experimental ABIEncoderV2;
 import "./interface/IERC20.sol";
 import "./interface/IBarterswapV2Router01.sol";
 import "./interface/IV3SwapRouter.sol";
-import "./interface/IWETH.sol.sol";
+import "./interface/IWETH9.sol";
 import "./libs/TransferHelper.sol";
 import "./libs/SafeMath.sol";
 
@@ -71,7 +69,9 @@ contract BarterswapRouterV1 {
         uint amountInArrs = getAmountInArr(amountInArr);
         uint256 toFees = amountInArrs.mul(fees).div(1e18);
         if(froms == address(0)){
+        //地址0是否为weth
             require(msg.value == amountInArrs+toFees,"Price is wrong");
+            //转账给手续费地址
             TransferHelper.safeTransferETH(feeTo,toFees);
          }else{ 
             TransferHelper.safeTransferFrom(froms,msg.sender,address(this),amountInArrs );
@@ -124,6 +124,7 @@ contract BarterswapRouterV1 {
     }
         
                 
+ 
     function setFeeTo(address payable _feeTo) public onlyOwner returns(bool) {
         require(_feeTo != address(0), 'Barterswap: FORBIDDEN');
         feeTo = _feeTo;
@@ -145,12 +146,11 @@ contract BarterswapRouterV1 {
     
  
     function getFactory(address _routerArr) public pure returns(address Factory){
-        Factory = IVeniceswapV2Router01(_routerArr).factory(); 
+        Factory = IBarterswapV2Router01(_routerArr).factory(); 
     }
  
- 
     function getWETH(address _routerArr) public pure returns(address WETH){
-        WETH =  IVeniceswapV2Router01(_routerArr).WETH(); 
+        WETH =  IBarterswapV2Router01(_routerArr).WETH(); 
     }
 
 }
