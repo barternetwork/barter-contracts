@@ -124,7 +124,6 @@ contract BarterswapRouterV1 {
     }
         
                 
- 
     function setFeeTo(address payable _feeTo) public onlyOwner returns(bool) {
         require(_feeTo != address(0), 'Barterswap: FORBIDDEN');
         feeTo = _feeTo;
@@ -148,6 +147,7 @@ contract BarterswapRouterV1 {
     function getFactory(address _routerArr) public pure returns(address Factory){
         Factory = IVeniceswapV2Router01(_routerArr).factory(); 
     }
+ 
  
     function getWETH(address _routerArr) public pure returns(address WETH){
         WETH =  IVeniceswapV2Router01(_routerArr).WETH(); 
