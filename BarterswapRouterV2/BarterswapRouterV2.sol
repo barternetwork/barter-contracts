@@ -28,7 +28,7 @@ contract BarterswapRouterV1 {
     
     struct DataAll{
        uint256[]  amountInArr;
-       uint[]  amountOuntMinArr;
+       uint[]  amountOutMinArr;
        bytes[]  pathArr;
        address[] routerArr;
        address to;
@@ -62,16 +62,14 @@ contract BarterswapRouterV1 {
 
    
 
-    function multiSwap (uint256[] memory  amountInArr,uint256[] memory  amountOuntMinArr,
+    function multiSwap (uint256[] memory  amountInArr,uint256[] memory  amountOutMinArr,
             bytes[] memory pathArr,address[] memory routerArr,address to,uint256 deadline,address froms,address tos) external payable {
         
         {
         uint amountInArrs = getAmountInArr(amountInArr);
         uint256 toFees = amountInArrs.mul(fees).div(1e18);
         if(froms == address(0)){
-        //地址0是否为weth
             require(msg.value == amountInArrs+toFees,"Price is wrong");
-            //转账给手续费地址
             TransferHelper.safeTransferETH(feeTo,toFees);
          }else{ 
             TransferHelper.safeTransferFrom(froms,msg.sender,address(this),amountInArrs );
@@ -79,31 +77,31 @@ contract BarterswapRouterV1 {
         }
        }
 
-        dataAll = DataAll(amountInArr,amountOuntMinArr,pathArr,routerArr,to,deadline,froms,tos);
+        dataAll = DataAll(amountInArr,amountOutMinArr,pathArr,routerArr,to,deadline,froms,tos);
         swaps[] memory swapevent = new swaps[](dataAll.amountInArr.length);
 
         for(uint i = 0; i < dataAll.amountInArr.length; i++){
             if(dataAll.routerArr[i] == uniRouterArr){
                 uint256 amountsv3;
                 if(tos == address(0)){
-                        amountsv3 = swapExactInputV3(dataAll.routerArr[i],dataAll.pathArr[i],address(this),dataAll.amountInArr[i],dataAll.amountOuntMinArr[i],dataAll.froms);
+                        amountsv3 = swapExactInputV3(dataAll.routerArr[i],dataAll.pathArr[i],address(this),dataAll.amountInArr[i],dataAll.amountOutMinArr[i],dataAll.froms);
                         IWETH9(wethAddre).withdraw(amountsv3);
                         TransferHelper.safeTransferETH(dataAll.to,amountsv3);
                     }else{
-                        amountsv3 = swapExactInputV3(dataAll.routerArr[i],dataAll.pathArr[i],dataAll.to,dataAll.amountInArr[i],dataAll.amountOuntMinArr[i],dataAll.froms);
+                        amountsv3 = swapExactInputV3(dataAll.routerArr[i],dataAll.pathArr[i],dataAll.to,dataAll.amountInArr[i],dataAll.amountOutMinArr[i],dataAll.froms);
                 }
               swapevent[i] = swaps(dataAll.routerArr[i],dataAll.amountInArr[i],amountsv3);
             }else{
                 uint[] memory amounts;
                 address[] memory pathArrs  = abi.decode(dataAll.pathArr[i],(address[]));
                 if(dataAll.froms == address(0)){
-                    amounts = IBarterswapV2Router01(dataAll.routerArr[i]).swapExactETHForTokens{value:dataAll.amountInArr[i]}(dataAll.amountOuntMinArr[i],pathArrs,dataAll.to,dataAll.deadline);
+                    amounts = IBarterswapV2Router01(dataAll.routerArr[i]).swapExactETHForTokens{value:dataAll.amountInArr[i]}(dataAll.amountOutMinArr[i],pathArrs,dataAll.to,dataAll.deadline);
                 }else if(dataAll.tos == address(0)){
                     IERC20(dataAll.froms).approve(dataAll.routerArr[i],dataAll.amountInArr[i]);
-                    amounts = IBarterswapV2Router01(address(dataAll.routerArr[i])).swapExactTokensForETH(dataAll.amountInArr[i],dataAll.amountOuntMinArr[i],pathArrs,dataAll.to,dataAll.deadline);
+                    amounts = IBarterswapV2Router01(address(dataAll.routerArr[i])).swapExactTokensForETH(dataAll.amountInArr[i],dataAll.amountOutMinArr[i],pathArrs,dataAll.to,dataAll.deadline);
                 }else{
                      IERC20(dataAll.froms).approve(dataAll.routerArr[i],dataAll.amountInArr[i]);
-                     amounts = IBarterswapV2Router01(address(dataAll.routerArr[i])).swapExactTokensForTokens( dataAll.amountInArr[i], dataAll.amountOuntMinArr[i],pathArrs,dataAll.to,dataAll.deadline);
+                     amounts = IBarterswapV2Router01(address(dataAll.routerArr[i])).swapExactTokensForTokens( dataAll.amountInArr[i], dataAll.amountOutMinArr[i],pathArrs,dataAll.to,dataAll.deadline);
                 }
                 swapevent[i] = swaps(dataAll.routerArr[i],dataAll.amountInArr[i],amounts[amounts.length-1]);
             }       
@@ -113,12 +111,12 @@ contract BarterswapRouterV1 {
     
 
 
-    function  swapExactInputV3(address _routers,bytes memory _path,address _recipient,uint256 amountIn,uint256 amountOuntMinArr,address froms) internal returns(uint amount){  
+    function  swapExactInputV3(address _routers,bytes memory _path,address _recipient,uint256 amountIn,uint256 amountOutMinArr,address froms) internal returns(uint amount){  
          if(froms == address(0)){
-             amount = IV3SwapRouter(_routers).exactInput{value: amountIn}(IV3SwapRouter.ExactInputParams(_path, _recipient,amountIn, amountOuntMinArr));
+             amount = IV3SwapRouter(_routers).exactInput{value: amountIn}(IV3SwapRouter.ExactInputParams(_path, _recipient,amountIn, amountOutMinArr));
          }else{
              IERC20(froms).approve(_routers,amountIn);
-             amount = IV3SwapRouter(_routers).exactInput(IV3SwapRouter.ExactInputParams(_path, _recipient, amountIn, amountOuntMinArr));
+             amount = IV3SwapRouter(_routers).exactInput(IV3SwapRouter.ExactInputParams(_path, _recipient, amountIn, amountOutMinArr));
         }
          
     }
