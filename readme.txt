@@ -10,19 +10,19 @@ function signature：  function multiSwap (AccessParams calldata params) externa
 
 parameter：
    struct AccessParams{
-        uint256[]  amountInArr;       // 输入数量
-        uint256[]  amountOutMinArr;   // 输出数量
-        bytes[]    pathArr;           // 最优路径
-        address    to;                // to地址
-        uint256    deadLine;          // 过期时间
-        address    inputAddre;        // 输入地址
-        address    outAddre;          // 输出地址
-        uint256[]    routerIndex;     // 对应swap合约地址index
+        uint256[]  amountInArr;       // amountIn
+        uint256[]  amountOutMinArr;   // amountOutMin
+        bytes[]    pathArr;           // best route
+        address    to;                // to address
+        uint256    deadLine;          // deadline
+        address    inputAddre;        // input token address
+        address    outAddre;          // output token address
+        uint256[]    routerIndex;     // index of router address
     } 
 
-routerIndex 0  -> uniswapshi现实合约
-routerIndex 1   -> sushiswap实现合约
-routerIndex 2    -> quickswap实现合约
+routerIndex 0  -> uniswap router address
+routerIndex 1   -> sushiswap router address
+routerIndex 2    -> quickswap router address
 
 return：void
 
