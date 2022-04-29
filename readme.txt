@@ -1,6 +1,10 @@
 
 
+ 0 Uniswap：0x42767d79A94B707f2EB804FD704707B83dDbF939
+ 1 sushiswap:0xfaB0C4C2E53A177CeB8a419a0AfB702Ba81D6C64
+ 2 Quockswap:0x8479565513454215Eef33fC73aabae5344553d43
 
+BarterswapRouter :0x3044BED7679b031CCbefEC054FdA9aD350D372B4
 
 方法：  function multiSwap (AccessParams calldata params) external payable{}
 
