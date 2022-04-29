@@ -1,0 +1,456 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "/Users/wangjiawei/Desktop/test/hardhat/hardhat-tutorial/contracts/BarterswapRouter.sol": {
+      "lastModificationDate": 1651140966088,
+      "contentHash": "9f7a2e3b982a15679165292d6f7ff265",
+      "sourceName": "contracts/BarterswapRouter.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./interface/IERC20.sol",
+        "./libs/TransferHelper.sol",
+        "./libs/SafeMath.sol",
+        "./ISwap.sol"
+      ],
+      "versionPragmas": [
+        "^0.6.12"
+      ],
+      "artifacts": [
+        "BarterswapRouterV1"
+      ]
+    },
+    "/Users/wangjiawei/Desktop/test/hardhat/hardhat-tutorial/contracts/interface/IERC20.sol": {
+      "lastModificationDate": 1651140966053,
+      "contentHash": "23995470939523e7ead91129c4c1eed4",
+      "sourceName": "contracts/interface/IERC20.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.6.12"
+      ],
+      "artifacts": [
+        "IERC20"
+      ]
+    },
+    "/Users/wangjiawei/Desktop/test/hardhat/hardhat-tutorial/contracts/libs/TransferHelper.sol": {
+      "lastModificationDate": 1651140966074,
+      "contentHash": "1d175fafa3f97f21d4b8c21ec271d753",
+      "sourceName": "contracts/libs/TransferHelper.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./SafeMath.sol"
+      ],
+      "versionPragmas": [
+        "^0.6.12"
+      ],
+      "artifacts": [
+        "TransferHelper"
+      ]
+    },
+    "/Users/wangjiawei/Desktop/test/hardhat/hardhat-tutorial/contracts/libs/SafeMath.sol": {
+      "lastModificationDate": 1651140966074,
+      "contentHash": "91686467b2ed60b159028adfee718550",
+      "sourceName": "contracts/libs/SafeMath.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.6.12"
+      ],
+      "artifacts": [
+        "SafeMath"
+      ]
+    },
+    "/Users/wangjiawei/Desktop/test/hardhat/hardhat-tutorial/contracts/ISwap.sol": {
+      "lastModificationDate": 1651140966097,
+      "contentHash": "9104047ea6f4b846bb28865a99146dc4",
+      "sourceName": "contracts/ISwap.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.6.12"
+      ],
+      "artifacts": [
+        "ISwap"
+      ]
+    },
+    "/Users/wangjiawei/Desktop/test/hardhat/hardhat-tutorial/contracts/KernelUniSwapV3.sol": {
+      "lastModificationDate": 1651140966122,
+      "contentHash": "6ab7298fda80695e4868736527acf532",
+      "sourceName": "contracts/KernelUniSwapV3.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./ISwap.sol",
+        "./interface/IERC20.sol",
+        "./interface/IBarterswapV2Router01.sol",
+        "./interface/IV3SwapRouter.sol",
+        "./interface/IWETH9.sol",
+        "./libs/TransferHelper.sol",
+        "./libs/SafeMath.sol"
+      ],
+      "versionPragmas": [
+        "^0.6.12"
+      ],
+      "artifacts": [
+        "kernelUniSwapV3"
+      ]
+    },
+    "/Users/wangjiawei/Desktop/test/hardhat/hardhat-tutorial/contracts/interface/IBarterswapV2Router01.sol": {
+      "lastModificationDate": 1651140966053,
+      "contentHash": "0e8560f519e495f63a79cef3ea2b44b3",
+      "sourceName": "contracts/interface/IBarterswapV2Router01.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.6.12"
+      ],
+      "artifacts": [
+        "IBarterswapV2Router01"
+      ]
+    },
+    "/Users/wangjiawei/Desktop/test/hardhat/hardhat-tutorial/contracts/interface/IV3SwapRouter.sol": {
+      "lastModificationDate": 1651140966055,
+      "contentHash": "822c0735db4a89e07ae42a7cbe933332",
+      "sourceName": "contracts/interface/IV3SwapRouter.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IUniswapV3SwapCallback.sol"
+      ],
+      "versionPragmas": [
+        "^0.6.12"
+      ],
+      "artifacts": [
+        "IV3SwapRouter"
+      ]
+    },
+    "/Users/wangjiawei/Desktop/test/hardhat/hardhat-tutorial/contracts/interface/IWETH9.sol": {
+      "lastModificationDate": 1651140966055,
+      "contentHash": "65af63e38db2459394215a5f6044496b",
+      "sourceName": "contracts/interface/IWETH9.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IERC20.sol"
+      ],
+      "versionPragmas": [
+        "^0.6.12"
+      ],
+      "artifacts": [
+        "IWETH9"
+      ]
+    },
+    "/Users/wangjiawei/Desktop/test/hardhat/hardhat-tutorial/contracts/interface/IUniswapV3SwapCallback.sol": {
+      "lastModificationDate": 1651140966054,
+      "contentHash": "8981eac36ed5e35e94448da55fbbfc27",
+      "sourceName": "contracts/interface/IUniswapV3SwapCallback.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.6.12"
+      ],
+      "artifacts": [
+        "IUniswapV3SwapCallback"
+      ]
+    },
+    "/Users/wangjiawei/Desktop/test/hardhat/hardhat-tutorial/contracts/kernelSushiSwapV2.sol": {
+      "lastModificationDate": 1651140966113,
+      "contentHash": "66f68cc30b293fcc63a3eb6f9990d8a8",
+      "sourceName": "contracts/kernelSushiSwapV2.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./ISwap.sol",
+        "./interface/IERC20.sol",
+        "./interface/IBarterswapV2Router01.sol",
+        "./libs/TransferHelper.sol",
+        "./libs/SafeMath.sol"
+      ],
+      "versionPragmas": [
+        "^0.6.12"
+      ],
+      "artifacts": [
+        "kernelSushiSwapV2"
+      ]
+    },
+    "/Users/wangjiawei/Desktop/test/hardhat/hardhat-tutorial/contracts/KernelQuickswapv2.sol": {
+      "lastModificationDate": 1651140966105,
+      "contentHash": "aea7fbf3d1c7a417ef41a64c2104fa0e",
+      "sourceName": "contracts/KernelQuickswapv2.sol",
+      "solcConfig": {
+        "version": "0.6.12",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./ISwap.sol",
+        "./interface/IERC20.sol",
+        "./interface/IBarterswapV2Router01.sol",
+        "./libs/TransferHelper.sol",
+        "./libs/SafeMath.sol"
+      ],
+      "versionPragmas": [
+        "^0.6.12"
+      ],
+      "artifacts": [
+        "kernelQuickSwapV2"
+      ]
+    }
+  }
+}

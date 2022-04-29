@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.6.12;
-
 interface IUniswapV3SwapCallback {
     /// @notice Called to `msg.sender` after executing a swap via IUniswapV3Pool#swap.
     /// @dev In the implementation you must pay the pool tokens owed for the swap.
