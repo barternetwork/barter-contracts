@@ -6,9 +6,9 @@
 
 BarterswapRouter :0x3044BED7679b031CCbefEC054FdA9aD350D372B4
 
-方法：  function multiSwap (AccessParams calldata params) external payable{}
+function signature：  function multiSwap (AccessParams calldata params) external payable{}
 
-参数：
+parameter：
    struct AccessParams{
         uint256[]  amountInArr;       // 输入数量
         uint256[]  amountOutMinArr;   // 输出数量
@@ -24,7 +24,7 @@ routerIndex 0  -> uniswapshi现实合约
 routerIndex 1   -> sushiswap实现合约
 routerIndex 2    -> quickswap实现合约
 
-返回值：无
+return：void
 
 
 
