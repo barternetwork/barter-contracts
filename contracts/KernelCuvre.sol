@@ -76,7 +76,7 @@ contract curveSwap{
     address public swapAddre = 0x1d8b86e3D88cDb2d34688e87E72F388Cb541B7C8;
 
     function filterCurve(address _to,address inputAddre,uint256[] memory _crvParams) external {
-        TransferHelper.safeTransferFrom(inputAddre,msg.sender,address(this),_crvParams[2]);
+        // TransferHelper.safeTransferFrom(inputAddre,msg.sender,address(this),_crvParams[2]);
         IERC20(inputAddre).approve(swapAddre,_crvParams[2]);
         ICurveFiCurve(swapAddre).exchange_underlying(_crvParams[0],_crvParams[1],_crvParams[2],_crvParams[3],_to);
     }
