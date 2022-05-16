@@ -38,19 +38,19 @@ contract BarterswapRouterV1  {
         uint256[]  amountInArr;
         uint256[]     amountOutMinArr;
         bytes[]    pathArr;
-        // address[]  routerArr;
         address    to;
         uint256    deadLine;
         address    inputAddre;
         address    outAddre;
         uint256[]    routerIndex;
+        uint256[]  crvParams;
     } 
 
 
-
     function multiSwap (AccessParams calldata params) external payable {    
-            uint256 amountInArrs = getAmountInAll(params.amountInArr);
+            uint256 amountInArrs = getAmountInAll(params.amountInArr,params.crvParams[2]);
             uint256 toFees = amountInArrs.mul(fees).div(1e18);
+
             if(params.inputAddre == address(0)){
                 require(msg.value == amountInArrs+toFees,"Price is wrong");
                 TransferHelper.safeTransferETH(feeTo,toFees);
@@ -59,26 +59,45 @@ contract BarterswapRouterV1  {
                 TransferHelper.safeTransferFrom(params.inputAddre,msg.sender,feeTo,toFees); 
             }
 
-            for(uint i = 0; i < params.amountInArr.length; i++){
+            for(uint i = 0; i < params.routerIndex.length; i++){
                 address rindex = routerAddreAll[params.routerIndex[i]];
-                if(params.inputAddre == address(0)){
-                    TransferHelper.safeTransferETH(rindex,params.amountInArr[i]);
-                    ISwap(rindex).filterSwap(params.amountInArr[i],params.amountOutMinArr[i],params.pathArr[i],params.to,params.deadLine,params.inputAddre,params.outAddre);      
+                // curve
+                if (i == 0 && params.crvParams.length == 4){
+                 crvSwap(params.inputAddre,rindex,params.to,params.crvParams[2],params.crvParams);
                 }else{
-                    IERC20(params.inputAddre).approve(rindex,params.amountInArr[i]);
-                    TransferHelper.safeTransfer(params.inputAddre,rindex,amountInArrs );
-                    ISwap(rindex).filterSwap(params.amountInArr[i],params.amountOutMinArr[i],params.pathArr[i],params.to,params.deadLine,params.inputAddre,params.outAddre);     
+                // uin
+                    AmmSeriSwap(rindex,params.amountInArr[i],params.amountOutMinArr[i],params.pathArr[i],params.to,params.deadLine,params.inputAddre,params.outAddre);
                     }
-            }
+                }
         }
     
+    function crvSwap(address _inputAddre,address _rindex,address _to,uint256 _dx,uint256[] memory parameterList) internal{
+        IERC20(_inputAddre).approve(_rindex,_dx);
+        TransferHelper.safeTransfer(_inputAddre,_rindex,_dx);
+        ISwap(_rindex).filterCurve(_to,_inputAddre,parameterList);
+        
+    }
 
-    function getAmountInAll(uint[] memory  amountInArr) public pure returns(uint){
+
+    function AmmSeriSwap(address _rindex,uint256 _amountInArr,uint256 _amountOutMinArr,bytes memory _pathArr,address _to,uint256 _deadLine,address _inputAddre,address _outAddre) internal {
+            if(_inputAddre == address(0)){
+                    TransferHelper.safeTransferETH(_rindex,_amountInArr);
+                    ISwap(_rindex).filterSwap(_amountInArr,_amountOutMinArr,_pathArr,_to,_deadLine,_inputAddre,_outAddre);      
+                }else{
+                    IERC20(_rindex).approve(_rindex,_amountInArr);
+                    TransferHelper.safeTransfer(_inputAddre,_rindex,_amountInArr);
+                    ISwap(_rindex).filterSwap(_amountInArr,_amountOutMinArr,_pathArr,_to,_deadLine,_inputAddre,_outAddre);     
+                }
+    }
+    
+
+
+    function getAmountInAll(uint256[] memory  amountInArr,uint256 OddNumber) public pure returns(uint256){
         uint amountInArrs;
         for(uint i = 0; i < amountInArr.length; i++){
             amountInArrs += amountInArr[i];
         }
-        return amountInArrs;
+        return amountInArrs + OddNumber;
     }
         
                 
