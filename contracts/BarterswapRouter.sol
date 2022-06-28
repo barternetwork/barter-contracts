@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.6.12;
+pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
 import "./interface/IERC20.sol";
 import "./libs/TransferHelper.sol";
 import "./libs/SafeMath.sol";
 import "./ISwap.sol";
+import "./interface/IBalancerSwap/IAsset.sol";
+import "./interface/IBalancerSwap/IVault.sol";
 
 
 
@@ -14,41 +16,53 @@ import "./ISwap.sol";
 
 contract BarterswapRouterV1  {
     using SafeMath for uint;
+   
     address  payable public  feeTo; 
     address public feeToAdmin; 
     uint public fees; 
 
-   
     mapping(uint256 => address) public routerAddreAll;
 
-    modifier onlyOwner() {
-        require(msg.sender == feeToAdmin,'BarterswapV2Router: EXPIRED');
-        _;
-    }
 
-     constructor(address _feeToAdmin) public {
-        feeToAdmin = _feeToAdmin;
-    }
+   
 
-     receive() external payable { 
-    }
-
-
-   struct AccessParams{
+   struct AccessParams {
         uint256[]  amountInArr;
-        uint256[]     amountOutMinArr;
+        uint256[]  amountOutMinArr;
         bytes[]    pathArr;
-        address    to;
+        address  payable  to;
         uint256    deadLine;
         address    inputAddre;
         address    outAddre;
-        uint256[]    routerIndex;
+        uint256[]  routerIndex;
         uint256[]  crvParams;
+        IVault.BatchSwapStep[]  batchSwapSteps;
+        IVault.FundManagement fundManaGements;
+        int256[]      limits;
+        IAsset[]       assets;
+        IVault.SwapKind _kind;              
     } 
+    
 
+
+     receive() external payable { 
+    }
+ 
+
+    modifier onlyOwner() {
+        require(msg.sender == feeToAdmin,"BarterswapV2Router: EXPIRED");
+        _;
+    }
+
+
+    constructor(address _feeToAdmin) {
+        feeToAdmin = _feeToAdmin;
+    }
+
+    
 
     function multiSwap (AccessParams calldata params) external payable {    
-            uint256 amountInArrs = getAmountInAll(params.amountInArr,params.crvParams[2]);
+            uint256 amountInArrs = getAmountInAll(params.amountInArr);
             uint256 toFees = amountInArrs.mul(fees).div(1e18);
 
             if(params.inputAddre == address(0)){
@@ -59,18 +73,37 @@ contract BarterswapRouterV1  {
                 TransferHelper.safeTransferFrom(params.inputAddre,msg.sender,feeTo,toFees); 
             }
 
+            
+
             for(uint i = 0; i < params.routerIndex.length; i++){
                 address rindex = routerAddreAll[params.routerIndex[i]];
-                // curve
                 if (i == 0 && params.crvParams.length == 4){
-                 crvSwap(params.inputAddre,rindex,params.to,params.crvParams[2],params.crvParams);
-                }else{
-                // uin
-                    AmmSeriSwap(rindex,params.amountInArr[i],params.amountOutMinArr[i],params.pathArr[i],params.to,params.deadLine,params.inputAddre,params.outAddre);
+                        crvSwap(params.inputAddre,rindex,params.to,params.crvParams[2],params.crvParams);
+                 }else if(i == 1 && params.limits.length > 1){
+                    
+                         balancerSwap(params._kind,params.inputAddre,rindex,params.batchSwapSteps,params.fundManaGements,params.assets,params.limits,params.deadLine);   
+
+                    }else{
+    
+                        AmmSeriSwap(rindex,params.amountInArr[i],params.amountOutMinArr[i],params.pathArr[i],params.to,params.deadLine,params.inputAddre,params.outAddre);
                     }
                 }
         }
     
+       
+    function balancerSwap(IVault.SwapKind _kind, address _inputAddre,address _rindex,IVault.BatchSwapStep[] memory _swaps,IVault.FundManagement memory _funds, IAsset[] memory  _assets, int256[]  memory _limit,uint256 _deadLine) internal{
+        if(_inputAddre == address(0)){
+            TransferHelper.safeTransferETH(_rindex,_swaps[0].amount);
+            ISwap(_rindex).filterBalancer(_kind,_swaps,_funds,_assets,_limit,_deadLine);
+        }else{
+            IERC20(_rindex).approve(_rindex,_swaps[0].amount);
+            TransferHelper.safeTransfer(_inputAddre,_rindex,_swaps[0].amount);
+            ISwap(_rindex).filterBalancer(_kind,_swaps,_funds,_assets,_limit,_deadLine);
+        }
+    }
+    
+
+
     function crvSwap(address _inputAddre,address _rindex,address _to,uint256 _dx,uint256[] memory parameterList) internal{
         IERC20(_inputAddre).approve(_rindex,_dx);
         TransferHelper.safeTransfer(_inputAddre,_rindex,_dx);
@@ -92,14 +125,16 @@ contract BarterswapRouterV1  {
     
 
 
-    function getAmountInAll(uint256[] memory  amountInArr,uint256 OddNumber) public pure returns(uint256){
+    function getAmountInAll(uint256[] memory  amountInArr) public pure returns(uint256){
         uint amountInArrs;
         for(uint i = 0; i < amountInArr.length; i++){
             amountInArrs += amountInArr[i];
         }
-        return amountInArrs + OddNumber;
+        return amountInArrs ;
     }
-        
+
+
+
                 
  
     function setFeeTo(address payable _feeTo) public onlyOwner returns(bool) {
@@ -128,6 +163,7 @@ contract BarterswapRouterV1  {
         routerAddreAll[index] = _routeraddre;
         return true;
     }
+
 
   
 }

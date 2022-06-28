@@ -4,22 +4,30 @@ pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
 
-import "./ISwap.sol";
-import "./interface/IERC20.sol";
-import "./interface/IBarterswapV2Router01.sol";
-import "./interface/IV3SwapRouter.sol";
-import "./interface/IWETH9.sol";
-import "./libs/TransferHelper.sol";
-import "./libs/SafeMath.sol";
+import "../interface/ISwap.sol";
+import "../interface/IERC20.sol";
+import "../interface/IBarterswapV2Router01.sol";
+import "../interface/IV3SwapRouter.sol";
+import "../interface/IWETH9.sol";
+import "../libs/TransferHelper.sol";
+import "../libs/SafeMath.sol";
 
 
 
-contract kernelUniSwapV3 {
+contract kernelUniSwapV3_test {
 
     address public constant Uni_SWAP = 0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45;
 
-    function filterSwap(uint256  amountInArr,uint256  amountOutMinArr,bytes memory pathArr,address to,address inputAddre,address outAddre) external  payable{
-            swapInputV3(pathArr,to,amountInArr,amountOutMinArr,inputAddre,outAddre);       
+    uint256  public _amountInArrs = 100000;
+    uint256  public _amountOutMinArrs = 0;
+    bytes  public  _pathArrs = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F000bb80d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270";
+    address public _inputAddres = 0xc2132D05D31c914a87C6611C10748AEb04B58e8F;
+    address public _outAddres = 0x0000000000000000000000000000000000000000;
+    address public _tos = msg.sender;
+
+
+    function filterSwap() external  payable{
+            swapInputV3(_pathArrs,_tos,_amountInArrs,_amountOutMinArrs,_inputAddres,_outAddres);       
     }
  
     
