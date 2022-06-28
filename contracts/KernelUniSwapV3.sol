@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
 
-import "./ISwap.sol";
+import "./interface/ISwap.sol";
 import "./interface/IERC20.sol";
 import "./interface/IBarterswapV2Router01.sol";
 import "./interface/IV3SwapRouter.sol";
@@ -22,7 +22,8 @@ contract kernelUniSwapV3 {
             swapInputV3(pathArr,to,amountInArr,amountOutMinArr,inputAddre,outAddre);       
     }
  
-    
+
+
     // V3
     function  swapInputV3(bytes memory _path,address _recipient,uint256 _amountIn,uint256 _amountOutMinArr,address _inputAddre,address _outAddre) internal {
                 uint256 amountsv3;

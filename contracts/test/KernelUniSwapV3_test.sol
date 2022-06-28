@@ -27,7 +27,14 @@ contract kernelUniSwapV3_test {
 
 
     function filterSwap() external  payable{
-            swapInputV3(_pathArrs,_tos,_amountInArrs,_amountOutMinArrs,_inputAddres,_outAddres);       
+            
+            if(_inputAddres == address(0)){
+                require(msg.value == _amountInArrs,"Price is wrong");  
+                swapInputV3(_pathArrs,_tos,_amountInArrs,_amountOutMinArrs,_inputAddres,_outAddres);
+            }else{
+                  TransferHelper.safeTransferFrom(_inputAddres,msg.sender,address(this),_amountInArrs);
+                  swapInputV3(_pathArrs,_tos,_amountInArrs,_amountOutMinArrs,_inputAddres,_outAddres);
+            }       
     }
  
     

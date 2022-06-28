@@ -82,7 +82,7 @@ contract curveSwap_test{
     uint256[4] _crvParams = [2,1,100000,0];
     address public inputAddre = 0xc2132D05D31c914a87C6611C10748AEb04B58e8F;
 
-
+    // in USDT - out USDC
     function filterCurve() external {
         TransferHelper.safeTransferFrom(inputAddre,msg.sender,address(this),_crvParams[2]);
         IERC20(inputAddre).approve(swapAddre,_crvParams[2]);
