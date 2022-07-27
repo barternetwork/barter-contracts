@@ -6,11 +6,11 @@ pragma experimental ABIEncoderV2;
 import "./interface/IERC20.sol";
 import "./libs/TransferHelper.sol";
 import "./libs/SafeMath.sol";
-import "./ISwap.sol";
+import "./interface/ISwap.sol";
 import "./interface/IBalancerSwap/IAsset.sol";
 import "./interface/IBalancerSwap/IVault.sol";
-
-
+import "./interface/IWETH9.sol";
+import "./interface/IBarterswapV2Router01.sol";
 
 
 
@@ -20,9 +20,8 @@ contract BarterswapRouterV1  {
     address  payable public  feeTo; 
     address public feeToAdmin; 
     uint public fees; 
-
     mapping(uint256 => address) public routerAddreAll;
-
+    address constant WETHS = 0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270;
 
    
 
@@ -54,7 +53,6 @@ contract BarterswapRouterV1  {
         _;
     }
 
-
     constructor(address _feeToAdmin) {
         feeToAdmin = _feeToAdmin;
     }
@@ -73,23 +71,23 @@ contract BarterswapRouterV1  {
                 TransferHelper.safeTransferFrom(params.inputAddre,msg.sender,feeTo,toFees); 
             }
 
-            
-
             for(uint i = 0; i < params.routerIndex.length; i++){
                 address rindex = routerAddreAll[params.routerIndex[i]];
                 if (i == 0 && params.crvParams.length == 4){
                         crvSwap(params.inputAddre,rindex,params.to,params.crvParams[2],params.crvParams);
-                 }else if(i == 1 && params.limits.length > 1){
-                    
-                         balancerSwap(params._kind,params.inputAddre,rindex,params.batchSwapSteps,params.fundManaGements,params.assets,params.limits,params.deadLine);   
+                }else if(i == 1 && params.limits.length > 1){
+                     
+                    balancerSwap(params._kind,params.inputAddre,rindex,params.batchSwapSteps,params.fundManaGements,params.assets,params.limits,params.deadLine);   
 
-                    }else{
-    
+                }else{
                         AmmSeriSwap(rindex,params.amountInArr[i],params.amountOutMinArr[i],params.pathArr[i],params.to,params.deadLine,params.inputAddre,params.outAddre);
                     }
                 }
         }
+
+
     
+    // balancer
        
     function balancerSwap(IVault.SwapKind _kind, address _inputAddre,address _rindex,IVault.BatchSwapStep[] memory _swaps,IVault.FundManagement memory _funds, IAsset[] memory  _assets, int256[]  memory _limit,uint256 _deadLine) internal{
         if(_inputAddre == address(0)){
@@ -103,6 +101,7 @@ contract BarterswapRouterV1  {
     }
     
 
+    // crv
 
     function crvSwap(address _inputAddre,address _rindex,address _to,uint256 _dx,uint256[] memory parameterList) internal{
         IERC20(_inputAddre).approve(_rindex,_dx);
@@ -111,6 +110,7 @@ contract BarterswapRouterV1  {
         
     }
 
+    // uni kind
 
     function AmmSeriSwap(address _rindex,uint256 _amountInArr,uint256 _amountOutMinArr,bytes memory _pathArr,address _to,uint256 _deadLine,address _inputAddre,address _outAddre) internal {
             if(_inputAddre == address(0)){
@@ -123,7 +123,7 @@ contract BarterswapRouterV1  {
                 }
     }
     
-
+    // amountInArr
 
     function getAmountInAll(uint256[] memory  amountInArr) public pure returns(uint256){
         uint amountInArrs;
@@ -134,15 +134,23 @@ contract BarterswapRouterV1  {
     }
 
 
+    // swapweth
+    function ethToWeth(uint256 amountin, address _to) public payable {
+            uint256 toFees = amountin.mul(fees).div(1e18);
+            require(msg.value == amountin + toFees,"Price is wrong");
+            TransferHelper.safeTransferETH(feeTo,toFees);
+            IWETH9(WETHS).deposit{value:amountin}();  
+            TransferHelper.safeTransfer(WETHS,_to,amountin);
+    }
 
-                
- 
+
     function setFeeTo(address payable _feeTo) public onlyOwner returns(bool) {
         require(_feeTo != address(0), 'Barterswap: FORBIDDEN');
         feeTo = _feeTo;
         return true;
     }
 
+    
 
     function setFeeToSetter(address _feetoAdmin) public onlyOwner returns(bool) {
          require(_feetoAdmin != address(0), 'Barterswap: FORBIDDEN');
@@ -158,6 +166,7 @@ contract BarterswapRouterV1  {
     }
     
 
+
     function setRouterAddreAll(uint256 index ,address _routeraddre) public onlyOwner returns(bool){
         require(_routeraddre != address(0),'Barterswap: FORBIDDEN');
         routerAddreAll[index] = _routeraddre;
@@ -165,5 +174,8 @@ contract BarterswapRouterV1  {
     }
 
 
+    function getWeth(address _routerArr) public pure returns(address WETH){
+        WETH =  IBarterswapV2Router01(_routerArr).WETH(); 
+    }
   
 }
