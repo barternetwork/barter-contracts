@@ -4,8 +4,8 @@ pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
 
-import "./interface/IBalancerSwap/IAsset.sol";
-import "./interface/IBalancerSwap/IVault.sol";
+import "./IBalancerSwap/IAsset.sol";
+import "./IBalancerSwap/IVault.sol";
 
 interface ISwap{
 
