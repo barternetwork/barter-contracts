@@ -1,0 +1,20 @@
+# IdeaIDE
+.idea
+
+#VsIDE
+.vscode
+
+# Mac
+.DS_Store
+
+# deps
+artifacts/
+remix-tests/
+
+
+#artifacts
+artifacts/
+
+
+#cache
+cache/
