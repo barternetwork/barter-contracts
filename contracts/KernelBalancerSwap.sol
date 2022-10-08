@@ -53,7 +53,7 @@ contract BalancerSwap{
             }else{
                 TransferHelper.safeApprove(address(assets[0]),BAlANCER_SWAP,swaps[0].amount);
                 //   IERC20(address(assets[0])).approve(BAlANCER_SWAP,swaps[0].amount);
-                  amountCalculated = IVault(BAlANCER_SWAP).batchSwap(kind,swaps,assets,funds,limit,deadline);
+                amountCalculated = IVault(BAlANCER_SWAP).batchSwap(kind,swaps,assets,funds,limit,deadline);
             }
         
         }
