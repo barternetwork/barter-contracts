@@ -15,7 +15,7 @@ interface ISwap{
 
 
     //CurveSwap
-    function filterCurve(address to,address inputAddre,uint256[] memory _crvParams) external;
+    function filterCurve(uint256 _amount,address inputAddre,address[6] memory _route, uint256[8] memory _indices,uint256 _min_received,address _to) external  payable;
 
 
     //BalancerSwap

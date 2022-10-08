@@ -21,20 +21,22 @@ contract BarterswapRouterV1  {
     address public feeToAdmin; 
     uint public fees; 
     mapping(uint256 => address) public routerAddreAll;
-    address constant WETHS = 0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270;
+    address constant WETHS = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
 
    
 
    struct AccessParams {
-        uint256[]  amountInArr;
+        uint256[]  amountInArr;  
         uint256[]  amountOutMinArr;
         bytes[]    pathArr;
-        address  payable  to;
-        uint256    deadLine;
-        address    inputAddre;
-        address    outAddre;
-        uint256[]  routerIndex;
-        uint256[]  crvParams;
+        address  payable  to; 
+        uint256    deadLine; 
+        address    inputAddre; 
+        address    outAddre; 
+        uint256[]  routerIndex; 
+        address[6] croute;
+        uint256[8] induces;
+        uint256    min_received;
         IVault.BatchSwapStep[]  batchSwapSteps;
         IVault.FundManagement fundManaGements;
         int256[]      limits;
@@ -67,20 +69,21 @@ contract BarterswapRouterV1  {
                 require(msg.value == amountInArrs+toFees,"Price is wrong");
                 TransferHelper.safeTransferETH(feeTo,toFees);
             }else{ 
-                TransferHelper.safeTransferFrom(params.inputAddre,msg.sender,address(this),amountInArrs );
+                TransferHelper.safeTransferFrom(params.inputAddre,msg.sender,address(this),amountInArrs);
                 TransferHelper.safeTransferFrom(params.inputAddre,msg.sender,feeTo,toFees); 
             }
 
             for(uint i = 0; i < params.routerIndex.length; i++){
                 address rindex = routerAddreAll[params.routerIndex[i]];
-                if (i == 0 && params.crvParams.length == 4){
-                        crvSwap(params.inputAddre,rindex,params.to,params.crvParams[2],params.crvParams);
+                if (i == 0  && params.induces.length == 8){
+                    
+                    crvSwap(rindex,params.amountInArr[i],params.inputAddre,params.croute,params.induces,params.min_received,params.to);
                 }else if(i == 1 && params.limits.length > 1){
                      
                     balancerSwap(params._kind,params.inputAddre,rindex,params.batchSwapSteps,params.fundManaGements,params.assets,params.limits,params.deadLine);   
 
                 }else{
-                        AmmSeriSwap(rindex,params.amountInArr[i],params.amountOutMinArr[i],params.pathArr[i],params.to,params.deadLine,params.inputAddre,params.outAddre);
+                    ammSeriSwap(rindex,params.amountInArr[i],params.amountOutMinArr[i],params.pathArr[i],params.to,params.deadLine,params.inputAddre,params.outAddre);
                     }
                 }
         }
@@ -94,7 +97,8 @@ contract BarterswapRouterV1  {
             TransferHelper.safeTransferETH(_rindex,_swaps[0].amount);
             ISwap(_rindex).filterBalancer(_kind,_swaps,_funds,_assets,_limit,_deadLine);
         }else{
-            IERC20(_rindex).approve(_rindex,_swaps[0].amount);
+            TransferHelper.safeApprove(_inputAddre,_rindex,_swaps[0].amount);
+            // IERC20(_rindex).approve(_rindex,_swaps[0].amount);
             TransferHelper.safeTransfer(_inputAddre,_rindex,_swaps[0].amount);
             ISwap(_rindex).filterBalancer(_kind,_swaps,_funds,_assets,_limit,_deadLine);
         }
@@ -103,34 +107,42 @@ contract BarterswapRouterV1  {
 
     // crv
 
-    function crvSwap(address _inputAddre,address _rindex,address _to,uint256 _dx,uint256[] memory parameterList) internal{
-        IERC20(_inputAddre).approve(_rindex,_dx);
-        TransferHelper.safeTransfer(_inputAddre,_rindex,_dx);
-        ISwap(_rindex).filterCurve(_to,_inputAddre,parameterList);
+    function crvSwap(address  _rindex,  uint256 _amount,address _inputAddre,address[6] memory _route, uint256[8] memory _indices,uint256 _min_Received,address _to) internal{
         
+         if(_inputAddre == address(0)){
+             TransferHelper.safeTransferETH(_rindex,_amount);   
+             ISwap(_rindex).filterCurve(_amount,_inputAddre,_route,_indices,_min_Received,_to);
+         }else{
+             TransferHelper.safeApprove(_inputAddre,_rindex,_amount);
+            // IERC20(_inputAddre).approve(_rindex,_amount);
+            TransferHelper.safeTransfer(_inputAddre,_rindex,_amount);
+            ISwap(_rindex).filterCurve(_amount,_inputAddre,_route,_indices,_min_Received,_to);
+         } 
     }
+
 
     // uni kind
 
-    function AmmSeriSwap(address _rindex,uint256 _amountInArr,uint256 _amountOutMinArr,bytes memory _pathArr,address _to,uint256 _deadLine,address _inputAddre,address _outAddre) internal {
+    function ammSeriSwap(address _rindex,uint256 _amount,uint256 _amountOutMinArr,bytes memory _pathArr,address _to,uint256 _deadLine,address _inputAddre,address _outAddre) internal {
             if(_inputAddre == address(0)){
-                    TransferHelper.safeTransferETH(_rindex,_amountInArr);
-                    ISwap(_rindex).filterSwap(_amountInArr,_amountOutMinArr,_pathArr,_to,_deadLine,_inputAddre,_outAddre);      
+                    TransferHelper.safeTransferETH(_rindex,_amount);
+                    ISwap(_rindex).filterSwap(_amount,_amountOutMinArr,_pathArr,_to,_deadLine,_inputAddre,_outAddre);      
                 }else{
-                    IERC20(_rindex).approve(_rindex,_amountInArr);
-                    TransferHelper.safeTransfer(_inputAddre,_rindex,_amountInArr);
-                    ISwap(_rindex).filterSwap(_amountInArr,_amountOutMinArr,_pathArr,_to,_deadLine,_inputAddre,_outAddre);     
+                    TransferHelper.safeApprove(_inputAddre,_rindex,_amount);
+                    // IERC20(_rindex).approve(_rindex,_amountInArr);
+                    TransferHelper.safeTransfer(_inputAddre,_rindex,_amount);
+                    ISwap(_rindex).filterSwap(_amount,_amountOutMinArr,_pathArr,_to,_deadLine,_inputAddre,_outAddre);     
                 }
     }
+
     
     // amountInArr
-
-    function getAmountInAll(uint256[] memory  amountInArr) public pure returns(uint256){
-        uint amountInArrs;
-        for(uint i = 0; i < amountInArr.length; i++){
+    function getAmountInAll(uint256[] memory  amountInArr) public pure  returns(uint256 ){
+        uint256 amountInArrs;
+        for(uint256 i = 0; i < amountInArr.length; i++){
             amountInArrs += amountInArr[i];
         }
-        return amountInArrs ;
+        return amountInArrs;
     }
 
 

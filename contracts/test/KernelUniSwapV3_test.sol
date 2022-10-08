@@ -13,39 +13,25 @@ import "../libs/TransferHelper.sol";
 import "../libs/SafeMath.sol";
 
 
-
 contract kernelUniSwapV3_test {
 
-    address public constant Uni_SWAP = 0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45;
+    address public constant UNI_SWAP = 0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45;
 
-    uint256  public _amountInArrs = 100000;
-    uint256  public _amountOutMinArrs = 0;
-    bytes  public  _pathArrs = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F000bb80d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270";
-    address public _inputAddres = 0xc2132D05D31c914a87C6611C10748AEb04B58e8F;
-    address public _outAddres = 0x0000000000000000000000000000000000000000;
-    address public _tos = msg.sender;
-
-
-    function filterSwap() external  payable{
-            
-            if(_inputAddres == address(0)){
-                require(msg.value == _amountInArrs,"Price is wrong");  
-                swapInputV3(_pathArrs,_tos,_amountInArrs,_amountOutMinArrs,_inputAddres,_outAddres);
-            }else{
-                  TransferHelper.safeTransferFrom(_inputAddres,msg.sender,address(this),_amountInArrs);
-                  swapInputV3(_pathArrs,_tos,_amountInArrs,_amountOutMinArrs,_inputAddres,_outAddres);
-            }       
+    function filterSwap(uint256  amountInArr,uint256  amountOutMinArr,bytes memory pathArr,address to,address inputAddre,address outAddre) external  payable{
+            swapInputV3(pathArr,to,amountInArr,amountOutMinArr,inputAddre,outAddre);       
     }
  
-    
+
+
     // V3
     function  swapInputV3(bytes memory _path,address _recipient,uint256 _amountIn,uint256 _amountOutMinArr,address _inputAddre,address _outAddre) internal {
                 uint256 amountsv3;
                  if(_outAddre == address(0)){
                         amountsv3 = swapExactInputV3(_path,address(this),_amountIn,_amountOutMinArr,_inputAddre);
-                        IWETH9(getWeth(Uni_SWAP)).withdraw(amountsv3);
+                        IWETH9(getWeth(UNI_SWAP)).withdraw(amountsv3);
                         TransferHelper.safeTransferETH(_recipient,amountsv3);
                     }else{
+                        TransferHelper.safeTransferFrom(_inputAddre,msg.sender,address(this),_amountIn);
                         amountsv3 = swapExactInputV3(_path,_recipient,_amountIn,_amountOutMinArr,_inputAddre);
                 }
             }
@@ -54,10 +40,10 @@ contract kernelUniSwapV3_test {
 
     function  swapExactInputV3(bytes memory _path,address _recipient,uint256 _amountIn,uint256 _amountOutMinArr,address _inputAddre) internal returns(uint amount){  
          if(_inputAddre == address(0)){
-             amount = IV3SwapRouter(Uni_SWAP).exactInput{value: _amountIn}(IV3SwapRouter.ExactInputParams(_path, _recipient,_amountIn, _amountOutMinArr));
+             amount = IV3SwapRouter(UNI_SWAP).exactInput{value: _amountIn}(IV3SwapRouter.ExactInputParams(_path, _recipient,_amountIn, _amountOutMinArr));
          }else{
-             IERC20(_inputAddre).approve(Uni_SWAP,_amountIn);
-             amount = IV3SwapRouter(Uni_SWAP).exactInput(IV3SwapRouter.ExactInputParams(_path, _recipient, _amountIn, _amountOutMinArr));
+             TransferHelper.safeApprove(_inputAddre,UNI_SWAP,_amountIn);
+             amount = IV3SwapRouter(UNI_SWAP).exactInput(IV3SwapRouter.ExactInputParams(_path, _recipient, _amountIn, _amountOutMinArr));
         }
          
     }

@@ -14,7 +14,7 @@ import "./libs/SafeMath.sol";
 
 contract kernelSushiSwapV2 {
 
-    address public constant SUSHI_SWAP = 0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506;
+    address public constant SUSHI_SWAP = 0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F;
         
     function filterSwap(uint256  amountInArr,uint256  amountOutMinArr,bytes memory pathArr,address to,uint256 _deadLine, address inputAddre,address outAddre) external  payable{
             swapInputV2(amountInArr,amountOutMinArr,pathArr,to,_deadLine,inputAddre,outAddre);       
@@ -28,10 +28,10 @@ contract kernelSushiSwapV2 {
                     if(_inputAddre == address(0)){
                         amounts = IBarterswapV2Router01(SUSHI_SWAP).swapExactETHForTokens{value:_amountInArr}(_amountOutMinArr,pathArrs,_to,_deadLine);
                     }else if(_outAddre == address(0)){
-                        IERC20(_inputAddre).approve(SUSHI_SWAP,_amountInArr);
+                          TransferHelper.safeApprove(_inputAddre,SUSHI_SWAP,_amountInArr);
                         amounts = IBarterswapV2Router01(address(SUSHI_SWAP)).swapExactTokensForETH(_amountInArr,_amountOutMinArr,pathArrs,_to,_deadLine);
                     }else{
-                        IERC20(_inputAddre).approve(SUSHI_SWAP,_amountInArr);
+                        TransferHelper.safeApprove(_inputAddre,SUSHI_SWAP,_amountInArr);
                         amounts = IBarterswapV2Router01(address(SUSHI_SWAP)).swapExactTokensForTokens( _amountInArr, _amountOutMinArr,pathArrs,_to,_deadLine);
                 }
             }
