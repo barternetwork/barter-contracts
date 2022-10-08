@@ -35,7 +35,8 @@ contract BalancerSwap{
                  amountCalculated = IVault(BAlANCER_SWAP).swap{value:amount}(IVault.SingleSwap(poolId,kind,assetIn,assetOut,amount,userData),
                                         IVault.FundManagement(sender,NTERNAL_CONST,recipient,NTERNAL_CONST),uint256(limit),deadline);
             }else{
-                  IERC20(address(assetIn)).approve(BAlANCER_SWAP,amount);
+                TransferHelper.safeApprove(address(assetIn),BAlANCER_SWAP,amount);
+                //   IERC20(address(assetIn)).approve(BAlANCER_SWAP,amount);
                   amountCalculated = IVault(BAlANCER_SWAP).swap(IVault.SingleSwap(poolId,kind,assetIn,assetOut,amount,userData),
                                         IVault.FundManagement(sender,NTERNAL_CONST,recipient,NTERNAL_CONST),uint256(limit),deadline);
             }
@@ -50,7 +51,8 @@ contract BalancerSwap{
             if(address(assets[0]) == address(0)){
                  amountCalculated = IVault(BAlANCER_SWAP).batchSwap{value:swaps[0].amount}(kind,swaps,assets,funds,limit,deadline);
             }else{
-                  IERC20(address(assets[0])).approve(BAlANCER_SWAP,swaps[0].amount);
+                TransferHelper.safeApprove(address(assets[0]),BAlANCER_SWAP,swaps[0].amount);
+                //   IERC20(address(assets[0])).approve(BAlANCER_SWAP,swaps[0].amount);
                   amountCalculated = IVault(BAlANCER_SWAP).batchSwap(kind,swaps,assets,funds,limit,deadline);
             }
         
