@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --timeout 100000 --rqporter mochawesome"
+
+    "test": "mocha --exit --recursive --timeout 1000000000"
   },
   "keywords": [],
   "author": "",

@@ -43,7 +43,7 @@ contract BalancerSwap{
         }
 
 
-    // batchSwap
+
     function _batchSwap(IVault.SwapKind kind,IVault.BatchSwapStep[] memory swaps,IVault.FundManagement memory funds, IAsset[] memory  assets, int256[]  memory limit,uint256 deadline) internal {
             
             int256[] memory amountCalculated;
@@ -53,7 +53,7 @@ contract BalancerSwap{
             }else{
                 TransferHelper.safeApprove(address(assets[0]),BAlANCER_SWAP,swaps[0].amount);
                 //   IERC20(address(assets[0])).approve(BAlANCER_SWAP,swaps[0].amount);
-                amountCalculated = IVault(BAlANCER_SWAP).batchSwap(kind,swaps,assets,funds,limit,deadline);
+                  amountCalculated = IVault(BAlANCER_SWAP).batchSwap(kind,swaps,assets,funds,limit,deadline);
             }
         
         }

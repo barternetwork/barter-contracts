@@ -64,7 +64,7 @@ interface ICurveFiCurve {
 
 
 
-contract CurveSwap_test{
+contract CurveSwap_Test{
     
      address public constant CURVE_SWAP  = 0xfA9a30350048B2BF66865ee20363067c66f67e58;
 

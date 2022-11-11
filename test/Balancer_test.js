@@ -16,7 +16,6 @@ describe("KernelBalancer_test",function(){
     let usdc;
     let balancer;
   
-    ///////////////////////
 
     beforeEach(async()=>{
         await network.provider.request({

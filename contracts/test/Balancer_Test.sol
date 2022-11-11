@@ -11,7 +11,7 @@ import "../interface/IBalancerSwap/IAsset.sol";
 
 
 
-contract KernelBalancer_test{
+contract Balancer_Test{
 
     address public constant BAlANCER_SWAP = 0xBA12222222228d8Ba445958a75a0704d566BF2C8;
     bool   public constant  NTERNAL_CONST = false;

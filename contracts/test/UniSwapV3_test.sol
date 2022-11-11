@@ -13,7 +13,7 @@ import "../libs/TransferHelper.sol";
 import "../libs/SafeMath.sol";
 
 
-contract kernelUniSwapV3_test {
+contract UniSwapV3_Test {
 
     address public constant UNI_SWAP = 0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45;
 

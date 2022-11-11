@@ -31,11 +31,13 @@ contract BarterswapRouterV1  {
         bytes[]    pathArr;
         address  payable  to; 
         uint256    deadLine; 
-        address    inputAddre; 
-        address    outAddre; 
+        // address    inputAddre; 
+        // address    outAddre; 
+        address[]  input_Out_addre;  // 0 -input  1- Out
         uint256[]  routerIndex; 
-        address[6] croute;
-        uint256[8] induces;
+        address[9][2] crv_Route;
+        uint256[3][4] crv_Swap_Params;
+        uint256       crv_expected;
         uint256    min_received;
         IVault.BatchSwapStep[]  batchSwapSteps;
         IVault.FundManagement fundManaGements;
@@ -65,28 +67,31 @@ contract BarterswapRouterV1  {
             uint256 amountInArrs = getAmountInAll(params.amountInArr);
             uint256 toFees = amountInArrs.mul(fees).div(1e18);
 
-            if(params.inputAddre == address(0)){
+            if(params.input_Out_addre[0] == address(0)){
                 require(msg.value == amountInArrs+toFees,"Price is wrong");
                 TransferHelper.safeTransferETH(feeTo,toFees);
             }else{ 
-                TransferHelper.safeTransferFrom(params.inputAddre,msg.sender,address(this),amountInArrs);
-                TransferHelper.safeTransferFrom(params.inputAddre,msg.sender,feeTo,toFees); 
+                TransferHelper.safeTransferFrom(params.input_Out_addre[0],msg.sender,address(this),amountInArrs);
+                TransferHelper.safeTransferFrom(params.input_Out_addre[0],msg.sender,feeTo,toFees); 
             }
+            
 
             for(uint i = 0; i < params.routerIndex.length; i++){
                 address rindex = routerAddreAll[params.routerIndex[i]];
-                if (i == 0  && params.induces.length == 8){
+                if (i == 0  && params.crv_expected != 0){
                     
-                    crvSwap(rindex,params.amountInArr[i],params.inputAddre,params.croute,params.induces,params.min_received,params.to);
-                }else if(i == 1 && params.limits.length > 1){
+                    crvSwap(params.input_Out_addre[0],rindex,params.crv_Route,params.crv_Swap_Params,params.amountInArr[i],params.crv_expected,params.to);
+                }else if(i == 1 && params.limits.length > 0){
                      
-                    balancerSwap(params._kind,params.inputAddre,rindex,params.batchSwapSteps,params.fundManaGements,params.assets,params.limits,params.deadLine);   
+                    balancerSwap(params._kind,params.input_Out_addre[0],rindex,params.batchSwapSteps,params.fundManaGements,params.assets,params.limits,params.deadLine);   
 
                 }else{
-                    ammSeriSwap(rindex,params.amountInArr[i],params.amountOutMinArr[i],params.pathArr[i],params.to,params.deadLine,params.inputAddre,params.outAddre);
+
+                    ammSeriSwap(rindex,params.amountInArr[i],params.amountOutMinArr[i],params.pathArr[i],params.to,params.deadLine,params.input_Out_addre[0],params.input_Out_addre[1]);
+
                     }
                 }
-        }
+            }
 
 
     
@@ -105,24 +110,47 @@ contract BarterswapRouterV1  {
     }
     
 
+    
     // crv
-
-    function crvSwap(address  _rindex,  uint256 _amount,address _inputAddre,address[6] memory _route, uint256[8] memory _indices,uint256 _min_Received,address _to) internal{
+    function crvSwap(address _inputAddre,address  _rindex, address[9][2] memory _route,uint256[3][4] memory _swap_params,uint256 _amount, uint256 expected,address _to) internal{
         
-         if(_inputAddre == address(0)){
+        address[4] memory pools;                
+        pools[0] = _route[1][0];
+        pools[1] = _route[1][1];
+        pools[2] = _route[1][2];
+        pools[3] = _route[1][3];
+
+
+        address[9] memory route;
+        route[0] = _route[0][0];
+        route[1] = _route[0][1];
+        route[2] = _route[0][2];
+        route[3] = _route[0][3];
+        route[4] = _route[0][4];
+        route[5] = _route[0][5];
+        route[6] = _route[0][6];
+        route[7] = _route[0][7];
+        route[8] = _route[0][8];
+        
+        uint256[3][4] memory swap_params;
+        swap_params[0] = _swap_params[0];
+        swap_params[1] = _swap_params[1];
+        swap_params[2] = _swap_params[2];
+        swap_params[3] = _swap_params[3];
+
+        if(_inputAddre == address(0)){
              TransferHelper.safeTransferETH(_rindex,_amount);   
-             ISwap(_rindex).filterCurve(_amount,_inputAddre,_route,_indices,_min_Received,_to);
+             ISwap(_rindex).filterCurve(_inputAddre,route,swap_params,_amount,expected,pools,_to);
          }else{
              TransferHelper.safeApprove(_inputAddre,_rindex,_amount);
             // IERC20(_inputAddre).approve(_rindex,_amount);
             TransferHelper.safeTransfer(_inputAddre,_rindex,_amount);
-            ISwap(_rindex).filterCurve(_amount,_inputAddre,_route,_indices,_min_Received,_to);
+            ISwap(_rindex).filterCurve(_inputAddre,route,swap_params,_amount,expected,pools,_to);
          } 
     }
 
 
     // uni kind
-
     function ammSeriSwap(address _rindex,uint256 _amount,uint256 _amountOutMinArr,bytes memory _pathArr,address _to,uint256 _deadLine,address _inputAddre,address _outAddre) internal {
             if(_inputAddre == address(0)){
                     TransferHelper.safeTransferETH(_rindex,_amount);
