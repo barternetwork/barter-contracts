@@ -13,6 +13,7 @@ module.exports = {
   networks:{
     hardhat:{
       forking:{
+        enabled:true,
         url:'https://eth-mainnet.g.alchemy.com/v2/Gal5TfQIimFXW6D8plIco17HxVzch5_M'
       },
     },

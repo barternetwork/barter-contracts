@@ -7,8 +7,6 @@ import "./interface/IERC20.sol";
 import "./libs/TransferHelper.sol";
 import "./libs/SafeMath.sol";
 import "./interface/ISwap.sol";
-import "./interface/IBalancerSwap/IAsset.sol";
-import "./interface/IBalancerSwap/IVault.sol";
 import "./interface/IWETH9.sol";
 import "./interface/IBarterswapV2Router01.sol";
 
@@ -21,9 +19,10 @@ contract BarterswapRouterV1  {
     address public feeToAdmin; 
     uint public fees; 
     mapping(uint256 => address) public routerAddreAll;
-    address constant WETHS = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+   
 
    
+
 
    struct AccessParams {
         uint256[]  amountInArr;  
@@ -38,12 +37,7 @@ contract BarterswapRouterV1  {
         address[9][2] crv_Route;
         uint256[3][4] crv_Swap_Params;
         uint256       crv_expected;
-        uint256    min_received;
-        IVault.BatchSwapStep[]  batchSwapSteps;
-        IVault.FundManagement fundManaGements;
-        int256[]      limits;
-        IAsset[]       assets;
-        IVault.SwapKind _kind;              
+                     
     } 
     
 
@@ -81,36 +75,14 @@ contract BarterswapRouterV1  {
                 if (i == 0  && params.crv_expected != 0){
                     
                     crvSwap(params.input_Out_addre[0],rindex,params.crv_Route,params.crv_Swap_Params,params.amountInArr[i],params.crv_expected,params.to);
-                }else if(i == 1 && params.limits.length > 0){
-                     
-                    balancerSwap(params._kind,params.input_Out_addre[0],rindex,params.batchSwapSteps,params.fundManaGements,params.assets,params.limits,params.deadLine);   
-
                 }else{
 
                     ammSeriSwap(rindex,params.amountInArr[i],params.amountOutMinArr[i],params.pathArr[i],params.to,params.deadLine,params.input_Out_addre[0],params.input_Out_addre[1]);
-
                     }
                 }
             }
 
 
-    
-    // balancer
-       
-    function balancerSwap(IVault.SwapKind _kind, address _inputAddre,address _rindex,IVault.BatchSwapStep[] memory _swaps,IVault.FundManagement memory _funds, IAsset[] memory  _assets, int256[]  memory _limit,uint256 _deadLine) internal{
-        if(_inputAddre == address(0)){
-            TransferHelper.safeTransferETH(_rindex,_swaps[0].amount);
-            ISwap(_rindex).filterBalancer(_kind,_swaps,_funds,_assets,_limit,_deadLine);
-        }else{
-            TransferHelper.safeApprove(_inputAddre,_rindex,_swaps[0].amount);
-            // IERC20(_rindex).approve(_rindex,_swaps[0].amount);
-            TransferHelper.safeTransfer(_inputAddre,_rindex,_swaps[0].amount);
-            ISwap(_rindex).filterBalancer(_kind,_swaps,_funds,_assets,_limit,_deadLine);
-        }
-    }
-    
-
-    
     // crv
     function crvSwap(address _inputAddre,address  _rindex, address[9][2] memory _route,uint256[3][4] memory _swap_params,uint256 _amount, uint256 expected,address _to) internal{
         
@@ -120,32 +92,14 @@ contract BarterswapRouterV1  {
         pools[2] = _route[1][2];
         pools[3] = _route[1][3];
 
-
-        address[9] memory route;
-        route[0] = _route[0][0];
-        route[1] = _route[0][1];
-        route[2] = _route[0][2];
-        route[3] = _route[0][3];
-        route[4] = _route[0][4];
-        route[5] = _route[0][5];
-        route[6] = _route[0][6];
-        route[7] = _route[0][7];
-        route[8] = _route[0][8];
-        
-        uint256[3][4] memory swap_params;
-        swap_params[0] = _swap_params[0];
-        swap_params[1] = _swap_params[1];
-        swap_params[2] = _swap_params[2];
-        swap_params[3] = _swap_params[3];
-
         if(_inputAddre == address(0)){
              TransferHelper.safeTransferETH(_rindex,_amount);   
-             ISwap(_rindex).filterCurve(_inputAddre,route,swap_params,_amount,expected,pools,_to);
+             ISwap(_rindex).filterCurve(_inputAddre,_route[0],_swap_params,_amount,expected,pools,_to);
          }else{
              TransferHelper.safeApprove(_inputAddre,_rindex,_amount);
             // IERC20(_inputAddre).approve(_rindex,_amount);
             TransferHelper.safeTransfer(_inputAddre,_rindex,_amount);
-            ISwap(_rindex).filterCurve(_inputAddre,route,swap_params,_amount,expected,pools,_to);
+            ISwap(_rindex).filterCurve(_inputAddre,_route[0],_swap_params,_amount,expected,pools,_to);
          } 
     }
 
@@ -171,16 +125,6 @@ contract BarterswapRouterV1  {
             amountInArrs += amountInArr[i];
         }
         return amountInArrs;
-    }
-
-
-    // swapweth
-    function ethToWeth(uint256 amountin, address _to) public payable {
-            uint256 toFees = amountin.mul(fees).div(1e18);
-            require(msg.value == amountin + toFees,"Price is wrong");
-            TransferHelper.safeTransferETH(feeTo,toFees);
-            IWETH9(WETHS).deposit{value:amountin}();  
-            TransferHelper.safeTransfer(WETHS,_to,amountin);
     }
 
 
@@ -214,8 +158,5 @@ contract BarterswapRouterV1  {
     }
 
 
-    function getWeth(address _routerArr) public pure returns(address WETH){
-        WETH =  IBarterswapV2Router01(_routerArr).WETH(); 
-    }
   
 }
