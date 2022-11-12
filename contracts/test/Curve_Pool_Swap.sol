@@ -7,15 +7,10 @@ import "../interface/ISwap.sol";
 import "../interface/IERC20.sol";
 import "../libs/TransferHelper.sol";
 import "hardhat/console.sol"; 
+import "../interface/ICurveRouter.sol";
 
 
 
-interface ICurveFiCurve {
-
-   function get_best_rate(address from,address to,uint256 amount) external view returns(address,uint256);
-
-    function exchange_multiple(address[9] memory _route,uint256[3][4] memory _swap_params,uint256 _amount,uint256 _expected,address[4] memory _pools,address _receiver)payable external returns(uint256);
-}
 
 
 contract CurvePool_Swap_Test{
@@ -26,7 +21,7 @@ contract CurvePool_Swap_Test{
      uint256 received_Token;
      TransferHelper.safeTransferFrom(inputAddre,msg.sender,address(this),amount);
      TransferHelper.safeApprove(inputAddre,CURVE_SWAP,amount);
-     received_Token = ICurveFiCurve(CURVE_SWAP).exchange_multiple(route,swap_params,amount,expected,pools,receiver);
+     received_Token = ICurveRouters(CURVE_SWAP).exchange_multiple(route,swap_params,amount,expected,pools,receiver);
      return received_Token;
      
     }
@@ -37,7 +32,7 @@ contract CurvePool_Swap_Test{
         address addreto;
         uint256 addreyint;
 
-       (addreto,addreyint)= ICurveFiCurve(CURVE_SWAP).get_best_rate(from,to,amount);
+       (addreto,addreyint)= ICurveRouters(CURVE_SWAP).get_best_rate(from,to,amount);
         return (addreto,addreyint);
 
 
