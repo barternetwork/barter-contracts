@@ -37,7 +37,7 @@ describe("CurvePool_Swap_Test",function(){
 
     let  amounts = 100000000;
 
-    let  expected = 0;
+    let  expected = 950000000;
 
     let pools = ["0x0000000000000000000000000000000000000000","0x0000000000000000000000000000000000000000","0x0000000000000000000000000000000000000000","0x0000000000000000000000000000000000000000"];
 
@@ -79,7 +79,7 @@ describe("CurvePool_Swap_Test",function(){
         console.log(received_Token)
         console.log("------------44444--------------------")
         
-        
+
         let _bal_usdc =  await usdc.balanceOf(whale.address);
         console.log(_bal_usdc); 
 

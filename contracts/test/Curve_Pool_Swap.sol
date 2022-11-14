@@ -21,7 +21,7 @@ contract CurvePool_Swap_Test{
      uint256 received_Token;
      TransferHelper.safeTransferFrom(inputAddre,msg.sender,address(this),amount);
      TransferHelper.safeApprove(inputAddre,CURVE_SWAP,amount);
-     received_Token = ICurveRouters(CURVE_SWAP).exchange_multiple(route,swap_params,amount,expected,pools,receiver);
+     received_Token = ICurveRouter(CURVE_SWAP).exchange_multiple(route,swap_params,amount,expected,pools,receiver);
      return received_Token;
      
     }
@@ -32,7 +32,7 @@ contract CurvePool_Swap_Test{
         address addreto;
         uint256 addreyint;
 
-       (addreto,addreyint)= ICurveRouters(CURVE_SWAP).get_best_rate(from,to,amount);
+       (addreto,addreyint)= ICurveRouter(CURVE_SWAP).get_best_rate(from,to,amount);
         return (addreto,addreyint);
 
 

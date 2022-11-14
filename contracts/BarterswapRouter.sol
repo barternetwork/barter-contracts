@@ -9,8 +9,7 @@ import "./libs/SafeMath.sol";
 import "./interface/ISwap.sol";
 import "./interface/IWETH9.sol";
 import "./interface/IBarterswapV2Router01.sol";
-
-
+import "hardhat/console.sol";
 
 contract BarterswapRouterV1  {
     using SafeMath for uint;
@@ -21,22 +20,17 @@ contract BarterswapRouterV1  {
     mapping(uint256 => address) public routerAddreAll;
    
 
-   
-
-
    struct AccessParams {
         uint256[]  amountInArr;  
         uint256[]  amountOutMinArr;
         bytes[]    pathArr;
         address  payable  to; 
         uint256    deadLine; 
-        // address    inputAddre; 
-        // address    outAddre; 
-        address[]  input_Out_addre;  // 0 -input  1- Out
+        address[]  input_Out_Addre;  // 0 -input  1- Out
         uint256[]  routerIndex; 
         address[9][2] crv_Route;
         uint256[3][4] crv_Swap_Params;
-        uint256       crv_expected;
+        uint256       crv_Expected;
                      
     } 
     
@@ -59,25 +53,25 @@ contract BarterswapRouterV1  {
 
     function multiSwap (AccessParams calldata params) external payable {    
             uint256 amountInArrs = getAmountInAll(params.amountInArr);
-            uint256 toFees = amountInArrs.mul(fees).div(1e18);
+            // uint256 toFees = amountInArrs.mul(fees).div(1e18);
 
-            if(params.input_Out_addre[0] == address(0)){
-                require(msg.value == amountInArrs+toFees,"Price is wrong");
-                TransferHelper.safeTransferETH(feeTo,toFees);
+            if(params.input_Out_Addre[0] == address(0)){
+                require(msg.value == amountInArrs,"Price is wrong");
+                // TransferHelper.safeTransferETH(feeTo,toFees);
             }else{ 
-                TransferHelper.safeTransferFrom(params.input_Out_addre[0],msg.sender,address(this),amountInArrs);
-                TransferHelper.safeTransferFrom(params.input_Out_addre[0],msg.sender,feeTo,toFees); 
+                console.log(params.input_Out_Addre[0],msg.sender,address(this),amountInArrs);
+                TransferHelper.safeTransferFrom(params.input_Out_Addre[0],msg.sender,address(this),amountInArrs);
+                // TransferHelper.safeTransferFrom(params.input_Out_Addre[0],msg.sender,feeTo,toFees); 
             }
             
-
             for(uint i = 0; i < params.routerIndex.length; i++){
                 address rindex = routerAddreAll[params.routerIndex[i]];
-                if (i == 0  && params.crv_expected != 0){
+                if (i == 0  && params.crv_Expected != 0){
                     
-                    crvSwap(params.input_Out_addre[0],rindex,params.crv_Route,params.crv_Swap_Params,params.amountInArr[i],params.crv_expected,params.to);
+                    crvSwap(params.input_Out_Addre[0],rindex,params.crv_Route,params.crv_Swap_Params,params.amountInArr[i],params.crv_Expected,params.to);
                 }else{
 
-                    ammSeriSwap(rindex,params.amountInArr[i],params.amountOutMinArr[i],params.pathArr[i],params.to,params.deadLine,params.input_Out_addre[0],params.input_Out_addre[1]);
+                    ammSeriSwap(rindex,params.amountInArr[i],params.amountOutMinArr[i],params.pathArr[i],params.to,params.deadLine,params.input_Out_Addre[0],params.input_Out_Addre[1]);
                     }
                 }
             }

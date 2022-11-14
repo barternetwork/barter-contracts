@@ -6,13 +6,35 @@
 // global scope, and execute the script.
 const hre = require("hardhat");
 
-async function main() {
-  const Token = await hre.ethers.getContractFactory("MBTToken");
-  const token = await Token.deploy();
-  await token.deployed();
 
-  console.log("toekn deployed to",token.address);
+async function main() {
+
+  let owenr;
+  [owenr] = await ethers.getSigners();
+  const BarterswapRouter = await ethers.getContractFactory("BarterswapRouterV1");
+  const barterRouter = await BarterswapRouter.deploy(owenr.address);
+  await barterRouter.deployed()
+
+  console.log(barterRouter.address);
+  console.log("----1111----");
+
+
+
+  const _curvePool_Swap = await ethers.getContractFactory("curvePool_Swap");
+  const curvePool_Swap = await _curvePool_Swap.deploy();
+  await curvePool_Swap.deployed()
+
+  console.log(barterRouter.address);
+  console.log("---2222-----");
+
+
+
+
 }
+
+
+
+
 
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
