@@ -9,14 +9,12 @@ import "./libs/SafeMath.sol";
 import "./interface/ISwap.sol";
 import "./interface/IWETH9.sol";
 import "./interface/IBarterswapV2Router01.sol";
-import "hardhat/console.sol";
+
 
 contract BarterswapRouterV1  {
+
     using SafeMath for uint;
-   
-    address  payable public  feeTo; 
     address public feeToAdmin; 
-    uint public fees; 
     mapping(uint256 => address) public routerAddreAll;
    
 
@@ -35,7 +33,6 @@ contract BarterswapRouterV1  {
     } 
     
 
-
      receive() external payable { 
     }
  
@@ -53,25 +50,18 @@ contract BarterswapRouterV1  {
 
     function multiSwap (AccessParams calldata params) external payable {    
             uint256 amountInArrs = getAmountInAll(params.amountInArr);
-            // uint256 toFees = amountInArrs.mul(fees).div(1e18);
-
             if(params.input_Out_Addre[0] == address(0)){
                 require(msg.value == amountInArrs,"Price is wrong");
-                // TransferHelper.safeTransferETH(feeTo,toFees);
             }else{ 
-                console.log(params.input_Out_Addre[0],msg.sender,address(this),amountInArrs);
                 TransferHelper.safeTransferFrom(params.input_Out_Addre[0],msg.sender,address(this),amountInArrs);
-                // TransferHelper.safeTransferFrom(params.input_Out_Addre[0],msg.sender,feeTo,toFees); 
             }
             
             for(uint i = 0; i < params.routerIndex.length; i++){
                 address rindex = routerAddreAll[params.routerIndex[i]];
-                if (i == 0  && params.crv_Expected != 0){
-                    
+                if (i == 0  && params.crv_Expected != 0){ 
                     crvSwap(params.input_Out_Addre[0],rindex,params.crv_Route,params.crv_Swap_Params,params.amountInArr[i],params.crv_Expected,params.to);
                 }else{
-
-                    ammSeriSwap(rindex,params.amountInArr[i],params.amountOutMinArr[i],params.pathArr[i],params.to,params.deadLine,params.input_Out_Addre[0],params.input_Out_Addre[1]);
+                    ammSeriSwap(rindex,params.amountInArr[i],params.amountOutMinArr[i],params.pathArr[i],params.to,params.deadLine,params.input_Out_Addre[0],params.input_Out_Addre[1]);                  
                     }
                 }
             }
@@ -91,7 +81,6 @@ contract BarterswapRouterV1  {
              ISwap(_rindex).filterCurve(_inputAddre,_route[0],_swap_params,_amount,expected,pools,_to);
          }else{
              TransferHelper.safeApprove(_inputAddre,_rindex,_amount);
-            // IERC20(_inputAddre).approve(_rindex,_amount);
             TransferHelper.safeTransfer(_inputAddre,_rindex,_amount);
             ISwap(_rindex).filterCurve(_inputAddre,_route[0],_swap_params,_amount,expected,pools,_to);
          } 
@@ -105,7 +94,6 @@ contract BarterswapRouterV1  {
                     ISwap(_rindex).filterSwap(_amount,_amountOutMinArr,_pathArr,_to,_deadLine,_inputAddre,_outAddre);      
                 }else{
                     TransferHelper.safeApprove(_inputAddre,_rindex,_amount);
-                    // IERC20(_rindex).approve(_rindex,_amountInArr);
                     TransferHelper.safeTransfer(_inputAddre,_rindex,_amount);
                     ISwap(_rindex).filterSwap(_amount,_amountOutMinArr,_pathArr,_to,_deadLine,_inputAddre,_outAddre);     
                 }
@@ -122,24 +110,10 @@ contract BarterswapRouterV1  {
     }
 
 
-    function setFeeTo(address payable _feeTo) public onlyOwner returns(bool) {
-        require(_feeTo != address(0), 'Barterswap: FORBIDDEN');
-        feeTo = _feeTo;
-        return true;
-    }
-
-    
 
     function setFeeToSetter(address _feetoAdmin) public onlyOwner returns(bool) {
          require(_feetoAdmin != address(0), 'Barterswap: FORBIDDEN');
         feeToAdmin = _feetoAdmin;
-        return true;
-    }
-    
-
-     function setFees(uint _fees) public onlyOwner returns(bool) {
-        require(_fees != 0, 'Barterswap: FORBIDDEN');
-        fees = _fees;
         return true;
     }
     
