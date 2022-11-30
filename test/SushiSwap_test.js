@@ -25,7 +25,7 @@ describe("kernelSushiSwapV2_test",function(){
         whale =  await ethers.getSigner(USDT_WHALE);
         usdt = await ethers.getContractAt("IERC20",USDT);
         usdc = await ethers.getContractAt("IERC20",USDC);
-        const SushiSwap = await ethers.getContractFactory("kernelSushiSwapV2_test");
+        const SushiSwap = await ethers.getContractFactory("SushiSwapV2_Test");
         sushiSwap =  await SushiSwap.deploy()
     })
  
@@ -47,16 +47,20 @@ describe("kernelSushiSwapV2_test",function(){
 
         //  balAddre2 = await usdt.balanceOf(sushiSwap.address);
         //  console.log(balAddre2);
-        
+        let balan_usdc1 = await usdc.balanceOf(whale.address);
+        console.log("balanceOf1:",balan_usdc1);
       
          await usdt.connect(whale).approve(sushiSwap.address,_amountInArrs);
         console.log("------------222222222--------------------")
 
-        await  sushiSwap.connect(whale).filterSwap(_amountInArrs,_amountOutMinArrs,_pathArrs,_msgaddre,_deadLines,usdt.address,usdc.address);
+        await  sushiSwap.connect(whale).filterSwap(_amountInArrs,_amountOutMinArrs,_pathArrs,whale.address,_deadLines,usdt.address,usdc.address);
         console.log("------------333333333--------------------")
 
-        balAddre2 = await usdc.balanceOf(_msgaddre);
+        let balAddre2 = await usdc.balanceOf(whale.address);
         console.log("balanceOf:",balAddre2);
+
+        let bala_usdt1 = await usdt.balanceOf(whale.address);
+        console.log("balanceOf:",bala_usdt1);
       })
 
     })

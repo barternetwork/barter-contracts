@@ -13,10 +13,10 @@ const { Bytecode } = require("hardhat/internal/hardhat-network/stack-traces/mode
 describe("KernelUniSwapV3_test",function(){   
     let USDT_WHALE = '0x56Eddb7aa87536c09CCc2793473599fD21A8b17F';
     let USDT = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
-    let DAI = '0x6B175474E89094C44Da98b954EedeAC495271d0F';
+    let USDC = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
     let whale;
     let usdt;
-    let dai;
+    let usdc;
     let uniswap;
     
     
@@ -29,8 +29,8 @@ describe("KernelUniSwapV3_test",function(){
 
         whale =  await ethers.getSigner(USDT_WHALE);
         usdt = await ethers.getContractAt("IERC20",USDT);
-        dai = await ethers.getContractAt("IERC20",DAI);
-        const uniswapV3 = await ethers.getContractFactory("kernelUniSwapV3_test");
+        usdc = await ethers.getContractAt("IERC20",USDC);
+        const uniswapV3 = await ethers.getContractFactory("UniSwapV3_Test");
         uniswap =  await uniswapV3.deploy()
     })
     
@@ -39,13 +39,16 @@ describe("KernelUniSwapV3_test",function(){
     
 
     // USDT -- USDC
-    let  _amountInArrs = 10000000;
-    let   _amountOutMinArrs = 150000000;
-    let  _deadLines = new Date().getTime() + 999999;
-    let  _pathArrs = '0xc2132D05D31c914a87C6611C10748AEb04B58e8F000bb86B175474E89094C44Da98b954EedeAC495271d0F';
+    let _amountInArr =  10n * 10n **6n;
+
+    let _amountOutMinArr = 9n * 10n **6n;
+    
+    let  _pathArrs = '0xdAC17F958D2ee523a2206206994597C13D831ec7000bb8A0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
 
     describe("fork uniswap mainnet",()=>{
     it("unlock caaount",async()=>{
+
+
         let bal_usdt =  await usdt.balanceOf(whale.address);
         console.log(bal_usdt); 
         console.log("------------111111111--------------------")
@@ -53,25 +56,20 @@ describe("KernelUniSwapV3_test",function(){
         //  const amount = 100n * 10n **6n;
         //  await usdt.connect(whale).transfer(uniswap.address,amount);
 
-        //  balAddre2 = await usdt.balanceOf(whale.address);
-        //  console.log(balAddre2);
+         let bal_usdc = await usdc.balanceOf(whale.address);
+         console.log(bal_usdc);
         
 
-        //  await usdt.connect(whale).approve(uniswap.address,_amountInArrs);
-        // console.log("------------222222222--------------------")
+         await usdt.connect(whale).approve(uniswap.address,_amountInArr);
+        console.log("------------222222222--------------------")
 
-        // let swap = '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45';
-        // let addre = await uniswap.getWeth(swap);
-        // console.log(addre);
 
-        // await  uniswap.connect(whale).filterSwap(_amountInArrs,_amountOutMinArrs,_pathArrs,whale.address,usdt.address,dai.address,{
-        //     gasLimit: 30000000,
-        //     gasPrice: 4407596212,
-        //     });
-        // console.log("------------333333333--------------------")
 
-        // balAddre2 = await dai.balanceOf(whale.address);
-        // console.log("balanceOf",balAddre2);
+        await  uniswap.connect(whale).filterSwap(_amountInArr,_amountOutMinArr,_pathArrs,whale.address,usdt.address,usdc.address);
+        console.log("------------ swap Success --------------------")
+
+        let balan_usdc1 = await usdc.balanceOf(whale.address);
+        console.log(balan_usdc1);
       })
 
     })

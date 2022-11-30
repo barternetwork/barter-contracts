@@ -13,7 +13,6 @@ import "./libs/TransferHelper.sol";
 import "./libs/SafeMath.sol";
 
 
-
 contract kernelUniSwapV3 {
 
     address public constant UNI_SWAP = 0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45;
@@ -43,6 +42,7 @@ contract kernelUniSwapV3 {
              amount = IV3SwapRouter(UNI_SWAP).exactInput{value: _amountIn}(IV3SwapRouter.ExactInputParams(_path, _recipient,_amountIn, _amountOutMinArr));
          }else{
              TransferHelper.safeApprove(_inputAddre,UNI_SWAP,_amountIn);
+
              amount = IV3SwapRouter(UNI_SWAP).exactInput(IV3SwapRouter.ExactInputParams(_path, _recipient, _amountIn, _amountOutMinArr));
         }
          
