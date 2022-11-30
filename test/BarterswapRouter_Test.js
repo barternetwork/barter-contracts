@@ -64,13 +64,6 @@ describe("BarterswapRouterV1",function(){
 
     })
 
-    // it("Modifying Administrator Rights",async()=>{
-    //     let nwesOwenr =  await barterRouter.connect(owenr).setFeeToSetter(addre2.address);
-    //     console.log("-----------------");
-    //     console.log(nwesOwenr);
-
-    // })
-
 
     it("Modification fee",async ()=>{
         let nwesFeses =  await barterRouter.connect(owenr).setFees(20000000000000000);
@@ -80,13 +73,6 @@ describe("BarterswapRouterV1",function(){
     })
 
 
-    // it("Add route subscripts and addresses",async ()=>{
-    //     let nwesRouter =  await barterRouter.connect(owenr).setRouterAddreAll(index,addre3.address);
-    //     console.log("-----------------");
-    //     console.log(nwesRouter);
-
-    // })
-    
       
 
       let  _amountInArr = [100000000];
@@ -117,10 +103,6 @@ describe("BarterswapRouterV1",function(){
         crv_Expected:_crv_Expected
     }
 
-    // console.log(AccessParams);
-
-    
-    // let adree01 = "0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65";
 
     it("Exchange of tokens",async ()=>{
 
@@ -136,16 +118,5 @@ describe("BarterswapRouterV1",function(){
         await barterRouter.connect(whale).multiSwap(AccessParams);
 
     })
-
-
-    // it("Exchange of tokens",async ()=>{
-
-    //     let nwesRouter =  await barterRouter.connect(owenr).setRouterAddreAll(index,addre3.address);
-    //     console.log("-----------------");
-    //     console.log(nwesRouter);
-
-    // })
-
-
          
 });

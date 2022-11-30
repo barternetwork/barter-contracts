@@ -57,23 +57,11 @@ describe("CurvePool_Swap_Test",function(){
         console.log("------------111111111--------------------")
 
 
-        // const amounts = 10n * 10n ** 6n;
-        // await usdc.connect(whale).transfer(curve_Pool.address,amounts);
-        // console.log("-------------2222222------------------");
-
-        // let curveaddr = await usdc.balanceOf(curve_Pool.address);
-        // console.log("amounts:",curveaddr);
-      
         
         await usdc.connect(whale).approve(curve_Pool.address,amounts);
         console.log("------------333333333--------------------")
 
 
-      // let shuju =   await  curve_Pool.connect(whale).get_best_rates(inputAddre,outaddres,amounts);
-      // console.log(shuju);
-
-        //  let received_Token =  await  curve_Pool.connect(whale).exchange_Multiples(inputAddre,route,swap_params,amounts,expected,pools,USDT_WHALE);
-        // console.log(received_Token);
         
         let received_Token =  await  curve_Pool.connect(whale).exchange_Multiples(inputAddre,route,swap_params,amounts,expected,pools,whale.address);
         console.log(received_Token)
@@ -88,9 +76,6 @@ describe("CurvePool_Swap_Test",function(){
 
         let turve_usdt = await usdt.balanceOf(whale.address);
         console.log("user_usdt:",turve_usdt);
-
-        // let turve_usdc = await usdc.balanceOf(curve_Pool.address);
-        // console.log("user_usdc:",turve_usdc);
 
       })
 

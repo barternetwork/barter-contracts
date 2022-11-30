@@ -53,9 +53,6 @@ describe("KernelUniSwapV3_test",function(){
         console.log(bal_usdt); 
         console.log("------------111111111--------------------")
 
-        //  const amount = 100n * 10n **6n;
-        //  await usdt.connect(whale).transfer(uniswap.address,amount);
-
          let bal_usdc = await usdc.balanceOf(whale.address);
          console.log(bal_usdc);
         
