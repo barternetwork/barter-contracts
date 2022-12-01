@@ -17,16 +17,8 @@ contract UniSwapV3_Test {
 
     address public constant UNI_SWAP = 0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45;
 
-    
-    function filterSwap(bytes memory exchangeData) external  payable{
-            uint256 amountInArr;
-            uint256 amountOutMinArr;
-            bytes memory pathArr;
-            address to;
-            address inputAddre;
-            address outAddre;
-            (amountInArr,amountOutMinArr,pathArr,to,inputAddre,outAddre) = abi.decode(exchangeData,(uint256,uint256,bytes,address,address,address));
-            swapInputV3(pathArr,to,amountInArr,amountOutMinArr,inputAddre,outAddre);     
+    function filterSwap(uint256  amountInArr,uint256  amountOutMinArr,bytes memory pathArr,address to,address inputAddre,address outAddre) external  payable{
+            swapInputV3(pathArr,to,amountInArr,amountOutMinArr,inputAddre,outAddre);       
     }
  
 

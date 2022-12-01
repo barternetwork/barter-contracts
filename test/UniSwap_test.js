@@ -39,43 +39,37 @@ describe("KernelUniSwapV3_test",function(){
     
 
     // USDT -- USDC
-     // USDT -- USDC
-     let  _exchangeData = '0x0000000000000000000000000000000000000000000000000000000000989680000000000000000000000000000000000000000000000000000000000089544000000000000000000000000000000000000000000000000000000000000000c000000000000000000000000056eddb7aa87536c09ccc2793473599fd21a8b17f000000000000000000000000dac17f958d2ee523a2206206994597c13d831ec7000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48000000000000000000000000000000000000000000000000000000000000002bdac17f958d2ee523a2206206994597c13d831ec7000bb8a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48000000000000000000000000000000000000000000';
-     let   _amountinArrs = 10n * 10n ** 6n;
-     // let  _deadLines = new Date().getTime() + 999999;
-     // const abi = ethers.utils.defaultAbiCoder;
-     // let  _pathArrs = '0x00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000002000000000000000000000000dac17f958d2ee523a2206206994597c13d831ec7000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48';
-     // let  _msgaddre = "0x923c32E239D4Cb04e242904D5f13Da75a6e00641";
- 
+    let _amountInArr =  10n * 10n **6n;
+
+    let _amountOutMinArr = 9n * 10n **6n;
     
-     describe("fork sushi mainnet",()=>{
-     it("unlock caaount",async()=>{
-         let bal_usdt =  await usdt.balanceOf(whale.address);
-         console.log("usdt_balan",bal_usdt); 
-         console.log("------------111111111--------------------")
- 
- 
-         let balan_usdc = await usdc.balanceOf(whale.address);
-         console.log("usdc_balan:",balan_usdc);
-         console.log("------------222222222--------------------")
- 
- 
-          await usdt.connect(whale).approve(uniswap.address,_amountinArrs);
-         console.log("------------approve usdt--------------------")
- 
-         await  uniswap.connect(whale).filterSwap(_exchangeData);
-         console.log("------------333333333--------------------")
- 
-         let balan_usdt = await usdt.balanceOf(whale.address);
-         console.log("balanceOf:",balan_usdt);
-         console.log("------------4444444444--------------------")
- 
-         let bala_usdc = await usdc.balanceOf(whale.address);
-         console.log("balanceOf:",bala_usdc);
-         console.log("------------5555555555--------------------")
-       })
- 
-     })
- 
+    let  _pathArrs = '0xdAC17F958D2ee523a2206206994597C13D831ec7000bb8A0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
+
+    describe("fork uniswap mainnet",()=>{
+    it("unlock caaount",async()=>{
+
+
+        let bal_usdt =  await usdt.balanceOf(whale.address);
+        console.log(bal_usdt); 
+        console.log("------------111111111--------------------")
+
+         let bal_usdc = await usdc.balanceOf(whale.address);
+         console.log(bal_usdc);
+        
+
+         await usdt.connect(whale).approve(uniswap.address,_amountInArr);
+        console.log("------------222222222--------------------")
+
+
+
+        await  uniswap.connect(whale).filterSwap(_amountInArr,_amountOutMinArr,_pathArrs,whale.address,usdt.address,usdc.address);
+        console.log("------------ swap Success --------------------")
+
+        let balan_usdc1 = await usdc.balanceOf(whale.address);
+        console.log(balan_usdc1);
+      })
+
+    })
+
 
 });
