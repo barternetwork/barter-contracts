@@ -8,13 +8,13 @@ const { any } = require("hardhat/internal/core/params/argumentTypes");
 
 
 
-describe("BarterswapRouterV1",function(){   
+describe("ButterswapRouterV1",function(){   
     let WHALE = '0x56Eddb7aa87536c09CCc2793473599fD21A8b17F';
     let USDT = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
     let USDC ='0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
-    let BarterswapRouter;
+    let ButterswapRouter;
     let owenr;
-    let barterRouter;
+    let ButterRouter;
     let addre1;
     let addre2;
     let index = 0
@@ -22,7 +22,7 @@ describe("BarterswapRouterV1",function(){
     let whale;
     let usdc;
     let usdt;
-    // let barterSwap;
+    // let ButterSwap;
 
 
     beforeEach(async()=>{
@@ -36,11 +36,11 @@ describe("BarterswapRouterV1",function(){
 
        [owenr,addre1,addre2,addre3] = await ethers.getSigners();
 
-        BarterswapRouter = await ethers.getContractFactory("BarterswapRouterV1");
-        barterRouter = await BarterswapRouter.deploy(owenr.address);
-        await barterRouter.deployed()
-        barterSwap = barterRouter.address;
-        console.log("BarterswapRouter address:",barterRouter.address);
+        ButterswapRouter = await ethers.getContractFactory("ButterswapRouterV1");
+        ButterRouter = await ButterswapRouter.deploy(owenr.address);
+        await ButterRouter.deployed()
+        ButterSwap = ButterRouter.address;
+        console.log("ButterswapRouter address:",ButterRouter.address);
 
 
         const _curvePool_Swap = await ethers.getContractFactory("curvePool_Swap");
@@ -56,7 +56,7 @@ describe("BarterswapRouterV1",function(){
 
 
     // it("Setting feeTo address",async ()=>{
-    //     let feeTos =  await barterRouter.connect(owenr).setFeeTo(addre1.address);
+    //     let feeTos =  await ButterRouter.connect(owenr).setFeeTo(addre1.address);
     //     console.log("-----------------");
     //     console.log(feeTos);
 
@@ -64,7 +64,7 @@ describe("BarterswapRouterV1",function(){
 
 
     // it("Modification fee",async ()=>{
-    //     let nwesFeses =  await barterRouter.connect(owenr).setFees(20000000000000000);
+    //     let nwesFeses =  await ButterRouter.connect(owenr).setFees(20000000000000000);
     //     console.log("-----------------");
     //     console.log(nwesFeses);
 
@@ -106,7 +106,7 @@ describe("BarterswapRouterV1",function(){
 
     it("Exchange of tokens",async ()=>{
 
-        let nwesRouter =  await barterRouter.connect(owenr).setRouterAddreAll(index,addre3);
+        let nwesRouter =  await ButterRouter.connect(owenr).setRouterAddreAll(index,addre3);
         console.log("---------111111--------");
         console.log(nwesRouter);
 
@@ -116,11 +116,11 @@ describe("BarterswapRouterV1",function(){
         let bal_usdc =  await usdc.balanceOf(whale.address);
         console.log("usdc_balan:",bal_usdc); 
 
-        await usdc.connect(whale).approve(barterRouter.address,_amountInArr[0]);
+        await usdc.connect(whale).approve(ButterRouter.address,_amountInArr[0]);
         // console.log(AccessParams);
         console.log(whale.address)
         console.log("------------222222--------------------")
-        await barterRouter.connect(whale).multiSwap(AccessParams);
+        await ButterRouter.connect(whale).multiSwap(AccessParams);
 
         let bal_usdc1 =  await usdc.balanceOf(whale.address);
         console.log("usdc_balan:",bal_usdc1); 

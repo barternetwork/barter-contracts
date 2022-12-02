@@ -11,11 +11,11 @@ async function main() {
 
   let owenr;
   [owenr] = await ethers.getSigners();
-  const BarterswapRouter = await ethers.getContractFactory("BarterswapRouterV1");
-  const barterRouter = await BarterswapRouter.deploy(owenr.address);
-  await barterRouter.deployed()
+  const ButterswapRouter = await ethers.getContractFactory("ButterswapRouterV1");
+  const ButterRouter = await ButterswapRouter.deploy(owenr.address);
+  await ButterRouter.deployed()
 
-  console.log(barterRouter.address);
+  console.log(ButterRouter.address);
   console.log("----1111----");
 
 
@@ -24,7 +24,7 @@ async function main() {
   const curvePool_Swap = await _curvePool_Swap.deploy();
   await curvePool_Swap.deployed()
 
-  console.log(barterRouter.address);
+  console.log(ButterRouter.address);
   console.log("---2222-----");
 
 

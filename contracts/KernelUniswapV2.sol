@@ -6,7 +6,7 @@ pragma experimental ABIEncoderV2;
 
 import "./interface/ISwap.sol";
 import "./interface/IERC20.sol";
-import "./interface/IBarterswapV2Router01.sol";
+import "./interface/IUniRouter01.sol";
 import "./libs/TransferHelper.sol";
 import "./libs/SafeMath.sol";
 
@@ -26,13 +26,13 @@ contract kernelUniSwapV2 {
                     uint[] memory amounts;
                     address[] memory pathArrs  = abi.decode(_path,(address[]));
                     if(_inputAddre == address(0)){
-                        amounts = IBarterswapV2Router01(UNI_SWAP).swapExactETHForTokens{value:_amountInArr}(_amountOutMinArr,pathArrs,_to,_deadLine);
+                        amounts = IUniRouter01(UNI_SWAP).swapExactETHForTokens{value:_amountInArr}(_amountOutMinArr,pathArrs,_to,_deadLine);
                     }else if(_outAddre == address(0)){
                           TransferHelper.safeApprove(_inputAddre,UNI_SWAP,_amountInArr);
-                        amounts = IBarterswapV2Router01(address(UNI_SWAP)).swapExactTokensForETH(_amountInArr,_amountOutMinArr,pathArrs,_to,_deadLine);
+                        amounts = IUniRouter01(address(UNI_SWAP)).swapExactTokensForETH(_amountInArr,_amountOutMinArr,pathArrs,_to,_deadLine);
                     }else{
                         TransferHelper.safeApprove(_inputAddre,UNI_SWAP,_amountInArr);
-                        amounts = IBarterswapV2Router01(address(UNI_SWAP)).swapExactTokensForTokens( _amountInArr, _amountOutMinArr,pathArrs,_to,_deadLine);
+                        amounts = IUniRouter01(address(UNI_SWAP)).swapExactTokensForTokens( _amountInArr, _amountOutMinArr,pathArrs,_to,_deadLine);
                 }
             }
 

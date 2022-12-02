@@ -135,7 +135,7 @@ pragma experimental ABIEncoderV2;
 &nbsp;
 import "../interface/ISwap.sol";
 import "../interface/IERC20.sol";
-import "../interface/IBarterswapV2Router01.sol";
+import "../interface/IButterswapV2Router01.sol";
 import "../libs/TransferHelper.sol";
 import "../libs/SafeMath.sol";
 &nbsp;
@@ -157,15 +157,15 @@ contract SushiSwapV2_Test {
                     uint[] memory amounts;
                     address[] memory pathArrs  = abi.decode(_path,(address[]));
                     <span class="missing-if-branch" title="if path not taken" >I</span>if(_inputAddre == address(0)){
-                        amounts = IBarterswapV2Router01(SUSHI_SWAP).swapExactETHForTokens{value:_amountInArr}(_amountOutMinArr,pathArrs,_to,_deadLine);
+                        amounts = IButterswapV2Router01(SUSHI_SWAP).swapExactETHForTokens{value:_amountInArr}(_amountOutMinArr,pathArrs,_to,_deadLine);
                     }else <span class="missing-if-branch" title="if path not taken" >I</span>if(_outAddre == address(0)){
 <span class="cstat-no" title="statement not covered" >                        TransferHelper.safeTransferFrom(_inputAddre,msg.sender,address(this),_amountInArr)</span>;
 <span class="cstat-no" title="statement not covered" >                        TransferHelper.safeApprove(_inputAddre,SUSHI_SWAP,_amountInArr)</span>;
-                        amounts = IBarterswapV2Router01(address(SUSHI_SWAP)).swapExactTokensForETH(_amountInArr,_amountOutMinArr,pathArrs,_to,_deadLine);
+                        amounts = IButterswapV2Router01(address(SUSHI_SWAP)).swapExactTokensForETH(_amountInArr,_amountOutMinArr,pathArrs,_to,_deadLine);
                     }else{
                         TransferHelper.safeTransferFrom(_inputAddre,msg.sender,address(this),_amountInArr);
                         TransferHelper.safeApprove(_inputAddre,SUSHI_SWAP,_amountInArr);
-                        amounts = IBarterswapV2Router01(address(SUSHI_SWAP)).swapExactTokensForTokens( _amountInArr, _amountOutMinArr,pathArrs,_to,_deadLine);
+                        amounts = IButterswapV2Router01(address(SUSHI_SWAP)).swapExactTokensForTokens( _amountInArr, _amountOutMinArr,pathArrs,_to,_deadLine);
                 }
             }
 &nbsp;

@@ -127,7 +127,7 @@ pragma experimental ABIEncoderV2;
 &nbsp;
 import "./interface/ISwap.sol";
 import "./interface/IERC20.sol";
-import "./interface/IBarterswapV2Router01.sol";
+import "./interface/IButterswapV2Router01.sol";
 import "./libs/TransferHelper.sol";
 import "./libs/SafeMath.sol";
 &nbsp;
@@ -147,13 +147,13 @@ contract kernelSushiSwapV2 {
 <span class="cstat-no" title="statement not covered" >                    uint[] memory amounts;</span>
 <span class="cstat-no" title="statement not covered" >                    address[] memory pathArrs  = abi.decode(_path,(address[]));</span>
 <span class="cstat-no" title="statement not covered" >                    if(_inputAddre == address(0)){</span>
-                        amounts = IBarterswapV2Router01(SUSHI_SWAP).swapExactETHForTokens{value:_amountInArr}(_amountOutMinArr,pathArrs,_to,_deadLine);
+                        amounts = IButterswapV2Router01(SUSHI_SWAP).swapExactETHForTokens{value:_amountInArr}(_amountOutMinArr,pathArrs,_to,_deadLine);
                     }else <span class="cstat-no" title="statement not covered" >if(_outAddre == address(0)){</span>
 <span class="cstat-no" title="statement not covered" >                          TransferHelper.safeApprove(_inputAddre,SUSHI_SWAP,_amountInArr)</span>;
-                        amounts = IBarterswapV2Router01(address(SUSHI_SWAP)).swapExactTokensForETH(_amountInArr,_amountOutMinArr,pathArrs,_to,_deadLine);
+                        amounts = IButterswapV2Router01(address(SUSHI_SWAP)).swapExactTokensForETH(_amountInArr,_amountOutMinArr,pathArrs,_to,_deadLine);
                     }else{
 <span class="cstat-no" title="statement not covered" >                        TransferHelper.safeApprove(_inputAddre,SUSHI_SWAP,_amountInArr)</span>;
-                        amounts = IBarterswapV2Router01(address(SUSHI_SWAP)).swapExactTokensForTokens( _amountInArr, _amountOutMinArr,pathArrs,_to,_deadLine);
+                        amounts = IButterswapV2Router01(address(SUSHI_SWAP)).swapExactTokensForTokens( _amountInArr, _amountOutMinArr,pathArrs,_to,_deadLine);
                 }
             }
 &nbsp;
