@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <title>Code coverage report for contracts/BarterswapRouter.sol</title>
+    <title>Code coverage report for contracts/ButterswapRouter.sol</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../prettify.css" />
     <link rel="stylesheet" href="../base.css" />
@@ -16,7 +16,7 @@
 <div class='wrapper'>
   <div class='pad1'>
     <h1>
-      <a href="../index.html">all files</a> / <a href="index.html">contracts/</a> BarterswapRouter.sol
+      <a href="../index.html">all files</a> / <a href="index.html">contracts/</a> ButterswapRouter.sol
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
@@ -311,10 +311,10 @@ import "./libs/TransferHelper.sol";
 import "./libs/SafeMath.sol";
 import "./interface/ISwap.sol";
 import "./interface/IWETH9.sol";
-import "./interface/IBarterswapV2Router01.sol";
+import "./interface/IButterswapV2Router01.sol";
 &nbsp;
 &nbsp;
-contract BarterswapRouterV1  {
+contract ButterswapRouterV1  {
 &nbsp;
     using SafeMath for uint;
     address public feeToAdmin; 
@@ -341,7 +341,7 @@ contract BarterswapRouterV1  {
  
 &nbsp;
     modifier onlyOwner() {
-        <span class="missing-if-branch" title="else path not taken" >E</span>require(msg.sender == feeToAdmin,"BarterswapV2Router: EXPIRED");
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(msg.sender == feeToAdmin,"ButterswapV2Router: EXPIRED");
         _;
     }
 &nbsp;
@@ -415,7 +415,7 @@ contract BarterswapRouterV1  {
 &nbsp;
 &nbsp;
 <span class="fstat-no" title="function not covered" >    function setFeeToSetter(address _feetoAdmin) public onlyOwner returns(bool) {</span>
-<span class="cstat-no" title="statement not covered" >         require(_feetoAdmin != address(0), 'Barterswap: FORBIDDEN')</span>;
+<span class="cstat-no" title="statement not covered" >         require(_feetoAdmin != address(0), 'Butterswap: FORBIDDEN')</span>;
         feeToAdmin = _feetoAdmin;
 <span class="cstat-no" title="statement not covered" >        return true;</span>
     }
@@ -423,7 +423,7 @@ contract BarterswapRouterV1  {
 &nbsp;
 &nbsp;
     function setRouterAddreAll(uint256 index ,address _routeraddre) public <span class="missing-if-branch" title="else path not taken" >E</span>onlyOwner returns(bool){
-        <span class="missing-if-branch" title="else path not taken" >E</span>require(_routeraddre != address(0),'Barterswap: FORBIDDEN');
+        <span class="missing-if-branch" title="else path not taken" >E</span>require(_routeraddre != address(0),'Butterswap: FORBIDDEN');
         routerAddreAll[index] = _routeraddre;
         return true;
     }

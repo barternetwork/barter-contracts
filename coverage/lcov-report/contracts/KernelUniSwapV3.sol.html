@@ -163,7 +163,7 @@ pragma experimental ABIEncoderV2;
 &nbsp;
 import "./interface/ISwap.sol";
 import "./interface/IERC20.sol";
-import "./interface/IBarterswapV2Router01.sol";
+import "./interface/IButterswapV2Router01.sol";
 import "./interface/IV3SwapRouter.sol";
 import "./interface/IWETH9.sol";
 import "./libs/TransferHelper.sol";
@@ -206,7 +206,7 @@ contract kernelUniSwapV3 {
     }
 &nbsp;
 <span class="fstat-no" title="function not covered" >    function getWeth(address _routerArr) public pure returns(address WETH){</span>
-        WETH =  IBarterswapV2Router01(_routerArr).WETH(); 
+        WETH =  IButterswapV2Router01(_routerArr).WETH(); 
     }
 &nbsp;
     receive() external payable { 

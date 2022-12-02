@@ -6,7 +6,7 @@ pragma experimental ABIEncoderV2;
 
 import "../interface/ISwap.sol";
 import "../interface/IERC20.sol";
-import "../interface/IBarterswapV2Router01.sol";
+import "../interface/IUniRouter01.sol";
 import "../interface/IV3SwapRouter.sol";
 import "../interface/IWETH9.sol";
 import "../libs/TransferHelper.sol";
@@ -57,7 +57,7 @@ contract UniSwapV3_Test {
     }
 
     function getWeth(address _routerArr) public pure returns(address WETH){
-        WETH =  IBarterswapV2Router01(_routerArr).WETH(); 
+        WETH =  IUniRouter01(_routerArr).WETH(); 
     }
 
     receive() external payable { 

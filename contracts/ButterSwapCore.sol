@@ -7,11 +7,10 @@ import "./interface/IERC20.sol";
 import "./libs/TransferHelper.sol";
 import "./libs/SafeMath.sol";
 import "./interface/ISwap.sol";
-import "./interface/IWETH9.sol";
-import "./interface/IBarterswapV2Router01.sol";
 
 
-contract BarterswapRouterV1  {
+
+contract ButterExchange  {
 
     using SafeMath for uint;
 
@@ -30,7 +29,7 @@ contract BarterswapRouterV1  {
  
     
        modifier onlyOwner() {
-        require(msg.sender == feeToAdmin,"BarterswapV2Router: EXPIRED");
+        require(msg.sender == feeToAdmin,"ButterswapV2Router: EXPIRED");
         _;
     }
 
@@ -67,7 +66,7 @@ contract BarterswapRouterV1  {
         }    
 
 
-    function getAmountInAll(uint256[] memory amountInArr) public pure  returns(uint256 ){
+    function getAmountInAll(uint256[] memory amountInArr) public pure  returns(uint256  ){
         uint256 amountInArrs;
         for(uint256 i = 0; i < amountInArr.length; i++){
             amountInArrs += amountInArr[i];
@@ -77,17 +76,15 @@ contract BarterswapRouterV1  {
 
 
 
-
     function updateAdmin(address adminAddre) public onlyOwner returns(bool) {
-         require(adminAddre != address(0), 'Barterswap: FORBIDDEN');
+         require(adminAddre != address(0), 'Butterswap: FORBIDDEN');
         feeToAdmin = adminAddre;
         return true;
     }
     
 
-
     function setRouterAddreAll(uint256 index ,address _routeraddre) public onlyOwner returns(bool){
-        require(_routeraddre != address(0),'Barterswap: FORBIDDEN');
+        require(_routeraddre != address(0),'Butterswap: FORBIDDEN');
         routerAddreAll[index] = _routeraddre;
         return true;
     }

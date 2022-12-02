@@ -9,8 +9,6 @@ import "./libs/TransferHelper.sol";
 import "./interface/ICurveRouter.sol";
 
 
-// (address _inputAddre,address  _rindex, address[9][2] memory _route,uint256[3][4] memory _swap_params,uint256 _amount, uint256 expected,address _to
-// address inputAddre,address[9][2] memory route,uint256[3][4] memory swap_params,uint256 amount,uint256 expected,address[4] memory pools,address receiver
 
 contract curvePool_Swap{
 
