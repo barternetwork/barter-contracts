@@ -24,7 +24,7 @@ contract ButterExchange  {
         bytes[]    pathArr;
         address  payable  to; 
         uint256    deadLine; 
-        address[]  inputOutAddre;  // 0 -input  1- Out
+        address[2]  inputOutAddre;  // 0 -input  1- Out
         uint256[]  routerIndex; 
         address[9][2] crvRoute;
         uint256[3][4] crvSwapParams;
