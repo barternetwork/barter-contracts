@@ -23,8 +23,8 @@ contract ButterExchange  {
         uint256[]  amountInArr;  
         bytes[]    paramsArr;
         uint32[]  routerIndex; 
-        address[2]  input_Out_Addre; 
-         // 0 -input  1- Out                     
+        address[2]  inputOutAddre; // 0 -input  1- Out  
+                            
     } 
  
     
@@ -43,22 +43,22 @@ contract ButterExchange  {
 
             uint256 amountInArrs = getAmountInAll(params.amountInArr);
 
-            if(params.input_Out_Addre[0] == address(0)){
+            if(params.inputOutAddre[0] == address(0)){
                 require(msg.value == amountInArrs,"Price is wrong");
             }else{ 
-                TransferHelper.safeTransferFrom(params.input_Out_Addre[0],msg.sender,address(this),amountInArrs);
+                TransferHelper.safeTransferFrom(params.inputOutAddre[0],msg.sender,address(this),amountInArrs);
             }
             
             for(uint i = 0; i < params.routerIndex.length; i++){
 
                 address swapIndex = routerAddreAll[params.routerIndex[i]];
-                  if(params.input_Out_Addre[0] == address(0)){
+                  if(params.inputOutAddre[0] == address(0)){
                       TransferHelper.safeTransferETH(swapIndex,params.amountInArr[i]); 
                       ISwap(swapIndex).filterSwap(params.paramsArr[i]);
                   }else{
 
-                      TransferHelper.safeApprove(params.input_Out_Addre[0],swapIndex,params.amountInArr[i]);
-                      TransferHelper.safeTransfer(params.input_Out_Addre[0],swapIndex,params.amountInArr[i]);
+                      TransferHelper.safeApprove(params.inputOutAddre[0],swapIndex,params.amountInArr[i]);
+                      TransferHelper.safeTransfer(params.inputOutAddre[0],swapIndex,params.amountInArr[i]);
                       ISwap(swapIndex).filterSwap(params.paramsArr[i]);
                   }
             }
