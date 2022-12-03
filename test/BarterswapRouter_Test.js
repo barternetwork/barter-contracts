@@ -24,6 +24,8 @@ describe("ButterswapRouterV1",function(){
     let usdt;
     // let ButterSwap;
 
+    let _curvePool_Swap;
+    let curvePool_Swap;
 
     beforeEach(async()=>{
         await network.provider.request({
@@ -55,28 +57,26 @@ describe("ButterswapRouterV1",function(){
 
 
 
-    // it("Setting feeTo address",async ()=>{
-    //     let feeTos =  await ButterRouter.connect(owenr).setFeeTo(addre1.address);
-    //     console.log("-----------------");
-    //     console.log(feeTos);
+    it("Setting feeTo address",async ()=>{
+        let feeTos =  await ButterRouter.connect(owenr).setFeeTo(addre1.address);
+        console.log("-----------------");
+        console.log(feeTos);
 
-    // })
-
-
-    // it("Modification fee",async ()=>{
-    //     let nwesFeses =  await ButterRouter.connect(owenr).setFees(20000000000000000);
-    //     console.log("-----------------");
-    //     console.log(nwesFeses);
-
-    // })
+    })
 
 
-      let _amountInArrs = 10n * 10n ** 6n;
-      let  _amountOutMinArrs = 9n * 10n ** 6n;
+    it("Modification fee",async ()=>{
+        let nwesFeses =  await ButterRouter.connect(owenr).setFees(20000000000000000);
+        console.log("-----------------");
+        console.log(nwesFeses);
+
+    })
 
 
-      let  _amountInArr = [_amountInArrs];
-      let  _amountOutMinArr = [_amountOutMinArrs];
+      
+
+      let  _amountInArr = [100000000];
+      let  _amountOutMinArr = [95000000];
       let  _pathArr= ["0x56Eddb7aa87536c09CCc2793473599fD21A8b17F"];
       let  _to = "0x56Eddb7aa87536c09CCc2793473599fD21A8b17F";
       let  _deadLine = 1600831965;
@@ -86,8 +86,8 @@ describe("ButterswapRouterV1",function(){
       let  _crv_Rout =  [["0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48","0xbEbc44782C7dB0a1A60Cb6fe97d0b483032FF1C7","0xdAC17F958D2ee523a2206206994597C13D831ec7","0x0000000000000000000000000000000000000000",
                         "0x0000000000000000000000000000000000000000","0x0000000000000000000000000000000000000000","0x0000000000000000000000000000000000000000","0x0000000000000000000000000000000000000000","0x0000000000000000000000000000000000000000"],
                         ["0x0000000000000000000000000000000000000000","0x0000000000000000000000000000000000000000","0x0000000000000000000000000000000000000000","0x0000000000000000000000000000000000000000","0x0000000000000000000000000000000000000000","0x0000000000000000000000000000000000000000","0x0000000000000000000000000000000000000000","0x0000000000000000000000000000000000000000","0x0000000000000000000000000000000000000000"]];
-      let  _crv_Expected = _amountOutMinArrs;                  
-
+      let  _crv_Expected = 950000000;                  
+        
 
 
     let AccessParams = {
@@ -110,24 +110,12 @@ describe("ButterswapRouterV1",function(){
         console.log("---------111111--------");
         console.log(nwesRouter);
 
-        let bal_usdt =  await usdt.balanceOf(whale.address);
-        console.log("usdt_balan:",bal_usdt); 
-
-        let bal_usdc =  await usdc.balanceOf(whale.address);
-        console.log("usdc_balan:",bal_usdc); 
 
         await usdc.connect(whale).approve(ButterRouter.address,_amountInArr[0]);
-        // console.log(AccessParams);
+        console.log(AccessParams);
         console.log(whale.address)
         console.log("------------222222--------------------")
         await ButterRouter.connect(whale).multiSwap(AccessParams);
-
-        let bal_usdc1 =  await usdc.balanceOf(whale.address);
-        console.log("usdc_balan:",bal_usdc1); 
-
-        let bal_usdt1 =  await usdt.balanceOf(whale.address);
-        console.log("usdt_balan:",bal_usdt1); 
-
 
     })
          
