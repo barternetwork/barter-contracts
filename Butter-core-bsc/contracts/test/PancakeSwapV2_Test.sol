@@ -20,7 +20,7 @@ contract PancakeSwap_Test {
      function filterSwap(bytes memory exchangeData) external  payable{
             uint256 amountInArr;
             uint256 amountOutMinArr;
-            bytes memory pathArr;
+            address[] memory pathArr;
             address to;
             uint256 deadLines;
             address inputAddre;
@@ -30,7 +30,7 @@ contract PancakeSwap_Test {
                 exchangeData,
                 (uint256,
                 uint256,
-                bytes,
+                address[],
                 address,
                 uint256,
                 address,
@@ -41,21 +41,19 @@ contract PancakeSwap_Test {
  
 
      // v2 
-    function  swapInputV2(uint256 _amountInArr,uint256 _amountOutMinArr,bytes memory _path,address _to,uint256 _deadLine,address _inputAddre ,address _outAddre) internal{
+    function  swapInputV2(uint256 _amountInArr,uint256 _amountOutMinArr,address[] memory _path,address _to,uint256 _deadLine,address _inputAddre ,address _outAddre) internal{
                     uint[] memory amounts;
-                    // path
-                      address[] memory paths  = abi.decode(_path,(address[]));
                     if(_inputAddre == address(0)){
                           require(msg.value == _amountInArr,"Price is wrong");
-                        amounts = IUniRouter01(PANCAKESWAP).swapExactETHForTokens{value:_amountInArr}(_amountOutMinArr,paths,_to,_deadLine);
+                        amounts = IUniRouter01(PANCAKESWAP).swapExactETHForTokens{value:_amountInArr}(_amountOutMinArr,_path,_to,_deadLine);
                     }else if(_outAddre == address(0)){
                         TransferHelper.safeTransferFrom(_inputAddre,msg.sender,address(this),_amountInArr);
                         TransferHelper.safeApprove(_inputAddre,PANCAKESWAP,_amountInArr);
-                        amounts = IUniRouter01(address(PANCAKESWAP)).swapExactTokensForETH(_amountInArr,_amountOutMinArr,paths,_to,_deadLine);
+                        amounts = IUniRouter01(address(PANCAKESWAP)).swapExactTokensForETH(_amountInArr,_amountOutMinArr,_path,_to,_deadLine);
                     }else{
                         TransferHelper.safeTransferFrom(_inputAddre,msg.sender,address(this),_amountInArr);
                         TransferHelper.safeApprove(_inputAddre,PANCAKESWAP,_amountInArr);
-                        amounts = IUniRouter01(address(PANCAKESWAP)).swapExactTokensForTokens( _amountInArr, _amountOutMinArr,paths,_to,_deadLine);
+                        amounts = IUniRouter01(address(PANCAKESWAP)).swapExactTokensForTokens( _amountInArr, _amountOutMinArr,_path,_to,_deadLine);
                 }
             }
 

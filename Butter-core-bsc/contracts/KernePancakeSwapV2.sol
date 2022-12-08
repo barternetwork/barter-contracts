@@ -15,12 +15,12 @@ import "./libs/SafeMath.sol";
 contract kernelPancakeSwapV2 {
 
     // address public constant PANCAKE_SWAP = 0x10ED43C718714eb63d5aA57B78B54704E256024E;  mainnet
-     address public constant PANCAKE_SWAP = 0x6710b000cc6728e068C095B66535E1A8b552e816;
+     address public constant PANCAKE_SWAP = 0xD99D1c33F9fC3444f8101754aBC46c52416550D1;
         
      function filterSwap(bytes memory exchangeData) external  payable{
             uint256 amountInArr;
             uint256 amountOutMinArr;
-            bytes memory pathArr;
+            address[] memory pathArr;
             address to;
             uint256 deadLines;
             address inputAddre;
@@ -30,7 +30,7 @@ contract kernelPancakeSwapV2 {
                 exchangeData,
                 (uint256,
                 uint256,
-                bytes,
+                address[],
                 address,
                 uint256,
                 address,
@@ -41,19 +41,16 @@ contract kernelPancakeSwapV2 {
  
 
      // v2 
-    function  swapInputV2(uint256 _amountInArr,uint256 _amountOutMinArr,bytes memory _path,address _to,uint256 _deadLine,address _inputAddre ,address _outAddre) internal{
-      
+    function  swapInputV2(uint256 _amountInArr,uint256 _amountOutMinArr,address[] memory _path,address _to,uint256 _deadLine,address _inputAddre ,address _outAddre) internal{
                     uint[] memory amounts;
-                    // path
-                    address[] memory paths  = abi.decode(_path,(address[]));
                     if(_inputAddre == address(0)){
-                        amounts = IUniRouter01(PANCAKE_SWAP).swapExactETHForTokens{value:_amountInArr}(_amountOutMinArr,paths,_to,_deadLine);
+                        amounts = IUniRouter01(PANCAKE_SWAP).swapExactETHForTokens{value:_amountInArr}(_amountOutMinArr,_path,_to,_deadLine);
                     }else if(_outAddre == address(0)){
                         TransferHelper.safeApprove(_inputAddre,PANCAKE_SWAP,_amountInArr);
-                        amounts = IUniRouter01(address(PANCAKE_SWAP)).swapExactTokensForETH(_amountInArr,_amountOutMinArr,paths,_to,_deadLine);
+                        amounts = IUniRouter01(address(PANCAKE_SWAP)).swapExactTokensForETH(_amountInArr,_amountOutMinArr,_path,_to,_deadLine);
                     }else{
                         TransferHelper.safeApprove(_inputAddre,PANCAKE_SWAP,_amountInArr);
-                        amounts = IUniRouter01(address(PANCAKE_SWAP)).swapExactTokensForTokens( _amountInArr, _amountOutMinArr,paths,_to,_deadLine);
+                        amounts = IUniRouter01(address(PANCAKE_SWAP)).swapExactTokensForTokens( _amountInArr, _amountOutMinArr,_path,_to,_deadLine);
                 }
             }
 

@@ -20,7 +20,7 @@ contract kernelUniSwapSwapV2 {
      function filterSwap(bytes memory exchangeData) external  payable{
             uint256 amountInArr;
             uint256 amountOutMinArr;
-            bytes memory pathArr;
+            address[] memory pathArr;
             address to;
             uint256 deadLines;
             address inputAddre;
@@ -30,7 +30,7 @@ contract kernelUniSwapSwapV2 {
                 exchangeData,
                 (uint256,
                 uint256,
-                bytes,
+                address[],
                 address,
                 uint256,
                 address,
@@ -41,19 +41,17 @@ contract kernelUniSwapSwapV2 {
  
 
      // v2 
-    function  swapInputV2(uint256 _amountInArr,uint256 _amountOutMinArr,bytes memory _path,address _to,uint256 _deadLine,address _inputAddre ,address _outAddre) internal{
-                   
+    function  swapInputV2(uint256 _amountInArr,uint256 _amountOutMinArr,address[] memory _path,address _to,uint256 _deadLine,address _inputAddre ,address _outAddre) internal{
                     uint[] memory amounts;
-                    address[] memory paths  = abi.decode(_path,(address[]));
                     if(_inputAddre == address(0)){
-                        amounts = IUniRouter01(UNISWAPV2).swapExactETHForTokens{value:_amountInArr}(_amountOutMinArr,paths,_to,_deadLine);
+                        amounts = IUniRouter01(UNISWAPV2).swapExactETHForTokens{value:_amountInArr}(_amountOutMinArr,_path,_to,_deadLine);
                     }else if(_outAddre == address(0)){
                         TransferHelper.safeApprove(_inputAddre,UNISWAPV2,_amountInArr);
-                        amounts = IUniRouter01(address(UNISWAPV2)).swapExactTokensForETH(_amountInArr,_amountOutMinArr,paths,_to,_deadLine);
+                        amounts = IUniRouter01(address(UNISWAPV2)).swapExactTokensForETH(_amountInArr,_amountOutMinArr,_path,_to,_deadLine);
                     }else{
 
                         TransferHelper.safeApprove(_inputAddre,UNISWAPV2,_amountInArr);
-                        amounts = IUniRouter01(address(UNISWAPV2)).swapExactTokensForTokens( _amountInArr, _amountOutMinArr,paths,_to,_deadLine);
+                        amounts = IUniRouter01(address(UNISWAPV2)).swapExactTokensForTokens( _amountInArr, _amountOutMinArr,_path,_to,_deadLine);
                 }
             }
 
