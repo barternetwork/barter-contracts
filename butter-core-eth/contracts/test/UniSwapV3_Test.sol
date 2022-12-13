@@ -6,7 +6,7 @@ pragma experimental ABIEncoderV2;
 
 import "../interface/ISwap.sol";
 import "../interface/IERC20.sol";
-import "../interface/IButterswapV2Router01.sol";
+import "../interface/IUniRouter01.sol";
 import "../interface/IV3SwapRouter.sol";
 import "../interface/IWETH9.sol";
 import "../libs/TransferHelper.sol";
@@ -17,8 +17,16 @@ contract UniSwapV3_Test {
 
     address public constant UNI_SWAP = 0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45;
 
-    function filterSwap(uint256  amountInArr,uint256  amountOutMinArr,bytes memory pathArr,address to,address inputAddre,address outAddre) external  payable{
-            swapInputV3(pathArr,to,amountInArr,amountOutMinArr,inputAddre,outAddre);       
+    
+    function filterSwap(bytes memory exchangeData) external  payable{
+            uint256 amountInArr;
+            uint256 amountOutMinArr;
+            bytes memory pathArr;
+            address to;
+            address inputAddre;
+            address outAddre;
+            (amountInArr,amountOutMinArr,pathArr,to,inputAddre,outAddre) = abi.decode(exchangeData,(uint256,uint256,bytes,address,address,address));
+            swapInputV3(pathArr,to,amountInArr,amountOutMinArr,inputAddre,outAddre);     
     }
  
 
@@ -49,7 +57,7 @@ contract UniSwapV3_Test {
     }
 
     function getWeth(address _routerArr) public pure returns(address WETH){
-        WETH =  IButterswapV2Router01(_routerArr).WETH(); 
+        WETH =  IUniRouter01(_routerArr).WETH(); 
     }
 
     receive() external payable { 
