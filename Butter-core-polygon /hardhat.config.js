@@ -1,6 +1,7 @@
 require("@nomicfoundation/hardhat-toolbox");
 
 
+// hardhat config
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
