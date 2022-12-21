@@ -86,14 +86,11 @@ contract ButterExchange  {
     function setRouterAddreAll(uint256 index ,address _routerAddre) public onlyOwner returns(bool){
         require(_routerAddre != address(0),'Butterswap: FORBIDDEN');
         indexAddressAll[index] = _routerAddre;
+         addressIndexAll[_routerAddre] = index;
         return true;
     }
 
-    function setRouterAddreAll(address _routerAddre,uint256 index ) public onlyOwner returns(bool){
-        require(_routerAddre != address(0),'Butterswap: FORBIDDEN');
-        addressIndexAll[_routerAddre] = index;
-        return true;
-    }
+
     
     receive() external payable { 
     }
