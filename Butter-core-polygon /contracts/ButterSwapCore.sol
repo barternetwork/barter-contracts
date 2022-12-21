@@ -14,7 +14,7 @@ contract ButterExchange  {
 
     using SafeMath for uint;
 
-    address public feeToAdmin; 
+    address public admin; 
 
     mapping(uint256 => address) public indexAddressAll;
    
@@ -30,12 +30,12 @@ contract ButterExchange  {
     } 
     
        modifier onlyOwner() {
-        require(msg.sender == feeToAdmin,"ButterswapV2Router: EXPIRED");
+        require(msg.sender == admin,"Caller is not an owner");
         _;
     }
 
-    constructor(address _feeToAdmin) {
-        feeToAdmin = _feeToAdmin;
+    constructor(address _admin) {
+        admin = _admin;
     }
 
 
@@ -77,14 +77,14 @@ contract ButterExchange  {
 
 
     function updateAdmin(address adminAddre) public onlyOwner returns(bool) {
-         require(adminAddre != address(0), 'Butterswap: FORBIDDEN');
-        feeToAdmin = adminAddre;
+         require(adminAddre != address(0), 'Address is 0');
+        admin = adminAddre;
         return true;
     }
     
 
    function setRouterAddreAll(uint256 index ,address _routerAddre) public onlyOwner returns(bool){
-        require(_routerAddre != address(0),'Butterswap: FORBIDDEN');
+        require(_routerAddre != address(0),'Address is 0');
         indexAddressAll[index] = _routerAddre;
         addressIndexAll[_routerAddre] = index;
         return true;
