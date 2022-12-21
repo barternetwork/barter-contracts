@@ -16,7 +16,9 @@ contract ButterExchange  {
 
     address public feeToAdmin; 
 
-    mapping(uint32 => address) public indexToRouterAddr;
+    mapping(uint256 => address) public indexAddressAll;
+   
+    mapping (address=>uint256) public addressIndexAll;
 
 
 
@@ -50,7 +52,7 @@ contract ButterExchange  {
             
             for(uint i = 0; i < params.routerIndex.length; i++){
 
-                address swapIndex = indexToRouterAddr[params.routerIndex[i]];
+                address swapIndex = indexAddressAll[params.routerIndex[i]];
 
                   if(params.inputOutAddre[0] == address(0)){
                       TransferHelper.safeTransferETH(swapIndex,params.amountInArr[i]); 
@@ -81,12 +83,17 @@ contract ButterExchange  {
     }
     
 
-    function setIndexToRouterAddr(uint32 _index ,address _indexToRouterAddr) public onlyOwner returns(bool){
-        require(_indexToRouterAddr != address(0),'Butterswap: FORBIDDEN');
-        indexToRouterAddr[_index] = _indexToRouterAddr;
+   function setRouterAddreAll(uint256 index ,address _routerAddre) public onlyOwner returns(bool){
+        require(_routerAddre != address(0),'Butterswap: FORBIDDEN');
+        indexAddressAll[index] = _routerAddre;
         return true;
     }
 
+    function setRouterAddreAll(address _routerAddre,uint256 index ) public onlyOwner returns(bool){
+        require(_routerAddre != address(0),'Butterswap: FORBIDDEN');
+        addressIndexAll[_routerAddre] = index;
+        return true;
+    }
 
     receive() external payable { 
     }

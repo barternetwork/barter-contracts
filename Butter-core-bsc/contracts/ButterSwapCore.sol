@@ -7,7 +7,7 @@ import "./interface/IERC20.sol";
 import "./libs/TransferHelper.sol";
 import "./libs/SafeMath.sol";
 import "./interface/ISwap.sol";
-import "hardhat/console.sol";
+
 
 
 contract ButterExchange  {
@@ -16,8 +16,10 @@ contract ButterExchange  {
 
     address public feeToAdmin; 
 
-    mapping(uint256 => address) public routerAddreAll;
+    mapping(uint256 => address) public indexAddressAll;
    
+   mapping (address=>uint256) public addressIndexAll;
+    
 
    struct AccessParams {
         uint256[]  amountInArr;  
@@ -50,7 +52,7 @@ contract ButterExchange  {
             
             for(uint i = 0; i < params.routerIndex.length; i++){
 
-                address swapIndex = routerAddreAll[params.routerIndex[i]];
+                address swapIndex = indexAddressAll[params.routerIndex[i]];
 
                   if(params.inputOutAddre[0] == address(0)){
                       TransferHelper.safeTransferETH(swapIndex,params.amountInArr[i]); 
@@ -81,12 +83,18 @@ contract ButterExchange  {
     }
     
 
-    function setRouterAddreAll(uint256 index ,address _routeraddre) public onlyOwner returns(bool){
-        require(_routeraddre != address(0),'Butterswap: FORBIDDEN');
-        routerAddreAll[index] = _routeraddre;
+    function setRouterAddreAll(uint256 index ,address _routerAddre) public onlyOwner returns(bool){
+        require(_routerAddre != address(0),'Butterswap: FORBIDDEN');
+        indexAddressAll[index] = _routerAddre;
         return true;
     }
 
+    function setRouterAddreAll(address _routerAddre,uint256 index ) public onlyOwner returns(bool){
+        require(_routerAddre != address(0),'Butterswap: FORBIDDEN');
+        addressIndexAll[_routerAddre] = index;
+        return true;
+    }
+    
     receive() external payable { 
     }
 
