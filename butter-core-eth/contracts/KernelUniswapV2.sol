@@ -18,7 +18,8 @@ contract kernelUniSwapV2 {
         // 
 
 
-    function filterSwap(bytes memory exchangeData) external  payable{
+    function filterSwap(bytes memory exchangeData) external  payable returns(uint256)
+    {
             uint256 amountInArr;
             uint256 amountOutMinArr;
             address[] memory pathArr;
@@ -27,12 +28,12 @@ contract kernelUniSwapV2 {
             address inputAddre;
             address outAddre;
             (amountInArr,amountOutMinArr,pathArr,to,deadLines,inputAddre,outAddre) = abi.decode(exchangeData,(uint256,uint256,address[],address,uint256,address,address));
-            swapInputV2(amountInArr,amountOutMinArr,pathArr,to,deadLines,inputAddre,outAddre);              
+            return swapInputV2(amountInArr,amountOutMinArr,pathArr,to,deadLines,inputAddre,outAddre);              
     }
  
 
      // v2 
-    function  swapInputV2(uint256 _amountInArr,uint256 _amountOutMinArr,address[] memory _path,address _to,uint256 _deadLine,address _inputAddre ,address _outAddre) internal{
+    function  swapInputV2(uint256 _amountInArr,uint256 _amountOutMinArr,address[] memory _path,address _to,uint256 _deadLine,address _inputAddre ,address _outAddre) internal returns(uint256){
                     uint[] memory amounts;
                     if(_inputAddre == address(0)){
                         amounts = IUniRouter01(UNI_SWAP).swapExactETHForTokens{value:_amountInArr}(_amountOutMinArr,_path,_to,_deadLine);
@@ -42,7 +43,8 @@ contract kernelUniSwapV2 {
                     }else{
                         TransferHelper.safeApprove(_inputAddre,UNI_SWAP,_amountInArr);
                         amounts = IUniRouter01(address(UNI_SWAP)).swapExactTokensForTokens( _amountInArr, _amountOutMinArr,_path,_to,_deadLine);
-                }
+                    }
+                    return amounts.length > 0 ? amounts[amounts.length -1] : 0; 
             }
 
 }

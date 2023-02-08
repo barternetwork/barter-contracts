@@ -17,7 +17,7 @@ contract KernelPancakeSwapV2 {
     // address public constant PANCAKE_SWAP = 0x10ED43C718714eb63d5aA57B78B54704E256024E;  mainnet
      address public constant PANCAKE_SWAP = 0x6710b000cc6728e068C095B66535E1A8b552e816;
         
-     function filterSwap(bytes memory exchangeData) external  payable{
+     function filterSwap(bytes memory exchangeData) external  payable returns(uint256){
             uint256 amountInArr;
             uint256 amountOutMinArr;
             address[] memory pathArr;
@@ -35,7 +35,7 @@ contract KernelPancakeSwapV2 {
                 address,
                 address));
 
-            swapInputV2(amountInArr,amountOutMinArr,pathArr,to,deadLines,inputAddre,outAddre);              
+            return swapInputV2(amountInArr,amountOutMinArr,pathArr,to,deadLines,inputAddre,outAddre);              
     }
  
 
@@ -48,7 +48,7 @@ contract KernelPancakeSwapV2 {
                 uint256 _deadLine,
                 address _inputAddre,
                 address _outAddre) 
-                internal{
+                internal returns(uint256){
                     uint[] memory amounts;
                     if(_inputAddre == address(0)){
                         amounts = IUniRouter01(PANCAKE_SWAP).swapExactETHForTokens{value:_amountInArr}(_amountOutMinArr,_path,_to,_deadLine);
@@ -59,6 +59,8 @@ contract KernelPancakeSwapV2 {
                         TransferHelper.safeApprove(_inputAddre,PANCAKE_SWAP,_amountInArr);
                         amounts = IUniRouter01(address(PANCAKE_SWAP)).swapExactTokensForTokens( _amountInArr, _amountOutMinArr,_path,_to,_deadLine);
                 }
+
+                return amounts.length > 0 ? amounts[amounts.length -1] : 0; 
             }
 
         receive() external payable { 
