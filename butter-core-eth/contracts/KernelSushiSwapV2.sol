@@ -16,7 +16,7 @@ contract kernelSushiSwapV2 {
 
     address public constant SUSHI_SWAP = 0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F;
         
-    function filterSwap(bytes memory exchangeData) external  payable{
+    function filterSwap(bytes memory exchangeData) external  payable returns(uint256){
             uint256 amountInArr;
             uint256 amountOutMinArr;
             address[] memory pathArr;
@@ -25,12 +25,12 @@ contract kernelSushiSwapV2 {
             address inputAddre;
             address outAddre;
             (amountInArr,amountOutMinArr,pathArr,to,deadLines,inputAddre,outAddre) = abi.decode(exchangeData,(uint256,uint256,address[],address,uint256,address,address));
-            swapInputV2(amountInArr,amountOutMinArr,pathArr,to,deadLines,inputAddre,outAddre);       
+            return swapInputV2(amountInArr,amountOutMinArr,pathArr,to,deadLines,inputAddre,outAddre);       
     }
  
 
      // v2 
-    function  swapInputV2(uint256 _amountInArr,uint256 _amountOutMinArr,address[] memory _path,address _to,uint256 _deadLine,address _inputAddre ,address _outAddre) internal{
+    function  swapInputV2(uint256 _amountInArr,uint256 _amountOutMinArr,address[] memory _path,address _to,uint256 _deadLine,address _inputAddre ,address _outAddre) internal returns(uint256){
                     uint[] memory amounts;
                     // address[] memory pathArrs  = abi.decode(_path,(address[]));
                     if(_inputAddre == address(0)){
@@ -41,7 +41,9 @@ contract kernelSushiSwapV2 {
                     }else{
                         TransferHelper.safeApprove(_inputAddre,SUSHI_SWAP,_amountInArr);
                         amounts = IUniRouter01(address(SUSHI_SWAP)).swapExactTokensForTokens( _amountInArr, _amountOutMinArr,_path,_to,_deadLine);
-                }
+                    }
+
+                    return amounts.length > 0 ? amounts[amounts.length -1] : 0; 
             }
 
 }

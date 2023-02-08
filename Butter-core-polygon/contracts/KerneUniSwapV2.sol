@@ -17,7 +17,7 @@ contract KernelUniSwapSwapV2 {
 
      address public constant UNISWAPV2 = 0x15e6C86A9AC9A32f91125794FDA82EEB807ed818;
         
-     function filterSwap(bytes memory exchangeData) external  payable{
+     function filterSwap(bytes memory exchangeData) external  payable returns(uint256){
             uint256 amountInArr;
             uint256 amountOutMinArr;
             address[] memory pathArr;
@@ -36,7 +36,7 @@ contract KernelUniSwapSwapV2 {
                 address,
                 address));
 
-            swapInputV2(amountInArr,amountOutMinArr,pathArr,to,deadLines,inputAddre,outAddre);              
+            return swapInputV2(amountInArr,amountOutMinArr,pathArr,to,deadLines,inputAddre,outAddre);              
         }
  
 
@@ -49,7 +49,7 @@ contract KernelUniSwapSwapV2 {
                uint256 _deadLine,
                address _inputAddre,    
                address _outAddre) 
-               internal{
+               internal returns(uint256){
                     uint[] memory amounts;
                     if(_inputAddre == address(0)){
                         amounts = IUniRouter01(UNISWAPV2).swapExactETHForTokens{value:_amountInArr}(_amountOutMinArr,_path,_to,_deadLine);
@@ -61,6 +61,7 @@ contract KernelUniSwapSwapV2 {
                         TransferHelper.safeApprove(_inputAddre,UNISWAPV2,_amountInArr);
                         amounts = IUniRouter01(address(UNISWAPV2)).swapExactTokensForTokens( _amountInArr, _amountOutMinArr,_path,_to,_deadLine);
                     }
+                    return amounts.length > 0 ? amounts[amounts.length -1] : 0;
             }
 
         receive() external payable { 

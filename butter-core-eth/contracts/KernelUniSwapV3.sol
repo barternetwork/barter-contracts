@@ -17,7 +17,7 @@ contract kernelUniSwapV3 {
 
     address public constant UNI_SWAP = 0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45;
 
-    function filterSwap(bytes memory exchangeData) external  payable{
+    function filterSwap(bytes memory exchangeData) external  payable returns(uint256){
             uint256 amountInArr;
             uint256 amountOutMinArr;
             bytes memory pathArr;
@@ -25,13 +25,13 @@ contract kernelUniSwapV3 {
             address inputAddre;
             address outAddre;
             (amountInArr,amountOutMinArr,pathArr,to,inputAddre,outAddre) = abi.decode(exchangeData,(uint256,uint256,bytes,address,address,address));
-            swapInputV3(pathArr,to,amountInArr,amountOutMinArr,inputAddre,outAddre);     
+            return swapInputV3(pathArr,to,amountInArr,amountOutMinArr,inputAddre,outAddre);     
     }
  
 
 
     // V3
-    function  swapInputV3(bytes memory _path,address _recipient,uint256 _amountIn,uint256 _amountOutMinArr,address _inputAddre,address _outAddre) internal {
+    function  swapInputV3(bytes memory _path,address _recipient,uint256 _amountIn,uint256 _amountOutMinArr,address _inputAddre,address _outAddre) internal returns(uint256){
                 uint256 amountsv3;
                  if(_outAddre == address(0)){
                         amountsv3 = swapExactInputV3(_path,address(this),_amountIn,_amountOutMinArr,_inputAddre);
@@ -40,6 +40,7 @@ contract kernelUniSwapV3 {
                     }else{
                         amountsv3 = swapExactInputV3(_path,_recipient,_amountIn,_amountOutMinArr,_inputAddre);
                 }
+                return amountsv3;
             }
 
     

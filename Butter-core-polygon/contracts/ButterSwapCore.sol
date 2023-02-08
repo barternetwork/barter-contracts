@@ -20,7 +20,7 @@ contract ButterExchange  {
    
     mapping (address=>uint256) public addressIndexAll;
 
-
+   event MultiSwap(bytes32 indexed orderId,address indexed from,address inputToken,uint256 inputAmount,address outputToken,uint256 outputAmount);
 
    struct AccessParams {
         uint256[]  amountInArr;  
@@ -39,7 +39,7 @@ contract ButterExchange  {
     }
 
 
-    function multiSwap (AccessParams calldata params) external payable {    
+    function multiSwap (bytes32 orderId,AccessParams calldata params) external payable {    
 
             uint256 amountInArrs = getAmountInAll(params.amountInArr);
 
@@ -49,20 +49,21 @@ contract ButterExchange  {
 
                 TransferHelper.safeTransferFrom(params.inputOutAddre[0],msg.sender,address(this),amountInArrs);
             }
-            
+            uint256 amountOut; 
             for(uint i = 0; i < params.routerIndex.length; i++){
 
                 address swapIndex = indexAddressAll[params.routerIndex[i]];
 
                   if(params.inputOutAddre[0] == address(0)){
                       TransferHelper.safeTransferETH(swapIndex,params.amountInArr[i]); 
-                      ISwap(swapIndex).filterSwap(params.paramsArr[i]);
+                      amountOut += ISwap(swapIndex).filterSwap(params.paramsArr[i]);
                   }else{   
                       TransferHelper.safeApprove(params.inputOutAddre[0],swapIndex,params.amountInArr[i]);
                       TransferHelper.safeTransfer(params.inputOutAddre[0],swapIndex,params.amountInArr[i]);
-                      ISwap(swapIndex).filterSwap(params.paramsArr[i]);          
+                      amountOut += ISwap(swapIndex).filterSwap(params.paramsArr[i]);          
                   }
             } 
+            emit MultiSwap(orderId,msg.sender,params.inputOutAddre[0],amountInArrs,params.inputOutAddre[1],amountOut); 
         }    
 
 
