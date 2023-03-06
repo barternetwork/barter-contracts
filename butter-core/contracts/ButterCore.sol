@@ -14,9 +14,9 @@ contract ButterCore is IButterCore {
 
     address public admin;
 
-    mapping(uint256 => address) public indexAddressAll;
+    mapping(uint256 => SwapConfig) public swapConfigs;
 
-    mapping(address => uint256) public addressIndexAll;
+    mapping(uint256 => address) public swapTypeHandle; // 1 - univ2, 2 - univ3, 3 - curve
 
     modifier onlyOwner() {
         require(msg.sender == admin, "Caller is not an owner");
@@ -44,27 +44,22 @@ contract ButterCore is IButterCore {
         }
         uint256 amountOut;
         for (uint i = 0; i < params.routerIndex.length; i++) {
-            address swapIndex = indexAddressAll[params.routerIndex[i]];
-
-            (bool success, bytes memory data) = swapIndex.delegatecall(
+            SwapConfig storage config = swapConfigs[params.routerIndex[i]];
+            address handle = swapTypeHandle[config.swapType];
+            require(
+                config.swapRouter != address(0) && handle != address(0),
+                "router or handle not set"
+            );
+            (bool success, bytes memory data) = handle.delegatecall(
                 abi.encodeWithSelector(
                     ISwap.filterSwap.selector,
+                    config.swapRouter,
                     params.paramsArr[i]
                 )
             );
             require(success, "swap fail");
-            (uint256 _amountOutSingle) = abi.decode(data, (uint256));
+            uint256 _amountOutSingle = abi.decode(data, (uint256));
             amountOut += _amountOutSingle;
-
-            //   if(params.inputOutAddre[0] == address(0)){
-            //     //   TransferHelper.safeTransferETH(swapIndex,params.amountInArr[i]);
-            //       amountOut += ISwap(swapIndex).filterSwap{value:params.amountInArr[i]}(params.paramsArr[i]);
-            //   }else{
-            //     //  TransferHelper.safeApprove(params.inputOutAddre[0],swapIndex,params.amountInArr[i]);
-            //     //  TransferHelper.safeTransfer(params.inputOutAddre[0],swapIndex,params.amountInArr[i]);
-
-            //      // amountOut += ISwap(swapIndex).filterSwap(params.paramsArr[i]);
-            //   }
         }
 
         return amountOut;
@@ -86,13 +81,21 @@ contract ButterCore is IButterCore {
         return true;
     }
 
-    function setRouterAddreAll(
-        uint256 index,
-        address _routerAddre
+    function setSwapTypeHandle(
+        uint256 _swapType,
+        address _handle
+    ) external onlyOwner {
+        require(_swapType > 0 && _handle.code.length > 0);
+        swapTypeHandle[_swapType] = _handle;
+    }
+
+    function setSwapConfig(
+        uint256 _index,
+        SwapConfig calldata _config
     ) public onlyOwner returns (bool) {
-        require(_routerAddre != address(0), "Address is 0");
-        indexAddressAll[index] = _routerAddre;
-        addressIndexAll[_routerAddre] = index;
+        require(_config.swapRouter.code.length > 0, "router must be contract");
+        require(_config.swapType > 0, "type must gt 0");
+        swapConfigs[_index] = _config;
         return true;
     }
 

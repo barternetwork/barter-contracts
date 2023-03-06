@@ -17,39 +17,40 @@ async function deploy() {
   const butterCore = await ButterCore.deploy(wallet.address);
   await butterCore.deployed();
   console.log(`butterCore deployed to ${butterCore.address}`);
+
+  const UniV2ForkSwap = await ethers.getContractFactory("UniV2ForkSwap");
+  const uniV2ForkSwap = await UniV2ForkSwap.deploy();
+  await uniV2ForkSwap.deployed();
+  console.log(`uniV2 fork swap handle deployed to ${uniV2ForkSwap.address}`);
+  await (await butterCore.setSwapTypeHandle(1, uniV2ForkSwap.address)).wait();
+
+  if (network.name.indexOf('bsc') === -1) { // eth  or matic
+    let UniV3ForkSwap = await ethers.getContractFactory('UniV3ForkSwap');
+    let uniV3ForkSwap = await UniV3ForkSwap.deploy();
+    await uniV3ForkSwap.connect(wallet).deployed();
+    console.log(`uniV3 fork swap handle deployed to ${uniV3ForkSwap.address}`);
+    await (await butterCore.setSwapTypeHandle(2, uniV3ForkSwap.address)).wait();
+    if (network.name.indexOf('mainnet') === -1) {
+      let CurveForkSwap = await ethers.getContractFactory('CurveForkSwap');
+      let curveForkSwap = await CurveForkSwap.deploy();
+      await curveForkSwap.connect(wallet).deployed();
+      console.log(`curve fork swap handle deployed to ${curveForkSwap.address}`);
+      await (await butterCore.setSwapTypeHandle(3, curveForkSwap.address)).wait();
+    }
+  }
+
   let swaps = getSwaps(network.name);
   if (swaps.length == 0) {
     return;
   }
-
   for (let i = 0; i < swaps.length; i++) {
-
     let swap = swaps[i];
-    if (swap.type === 1) {
-
-      const UniV2ForkSwap = await ethers.getContractFactory("UniV2ForkSwap");
-      const uniV2ForkSwap = await UniV2ForkSwap.deploy(swap.router);
-      await uniV2ForkSwap.deployed();
-      console.log(`${swap.name} wrap deployed to ${uniV2ForkSwap.address}`);
-      await (await butterCore.setRouterAddreAll(swap.index, uniV2ForkSwap.address));
-      console.log(`set index ${swap.index} for ${swap.name}`);
-    } else if (swap.type === 2) {
-
-      const UnisV3ForkSwap = await ethers.getContractFactory("UnisV3ForkSwap");
-      const unisV3ForkSwap = await UnisV3ForkSwap.deploy(swap.router);
-      await unisV3ForkSwap.deployed();
-      console.log(`${swap.name} wrap deployed to ${unisV3ForkSwap.address}`);
-      await (await butterCore.setRouterAddreAll(swap.index, unisV3ForkSwap.address));
-      console.log(`set index ${swap.index} for ${swap.name}`);
-    } else if (swap.type === 3) {
-
-      const CurveForkSwap = await ethers.getContractFactory("CurveForkSwap");
-      const curveForkSwap = await CurveForkSwap.deploy(swap.router);
-      await curveForkSwap.deployed();
-      console.log(`${swap.name} wrap deployed to ${curveForkSwap.address}`);
-      await (await butterCore.setRouterAddreAll(swap.index, curveForkSwap.address));
-      console.log(`set index ${swap.index} for ${swap.name}`);
+    let config = {
+      swapRouter: swap.router,
+      swapType: swap.type
     }
+    await (await butterCore.setSwapConfig(swap.index, config)).wait();
+    console.log(`set index ${swap.index} for ${swap.name}`);
   }
 
 }

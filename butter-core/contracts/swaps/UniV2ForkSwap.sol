@@ -9,16 +9,9 @@ import "../libs/TransferHelper.sol";
 import "../libs/SafeMath.sol";
 
 contract UniV2ForkSwap is ISwap {
-    address public immutable swapRouter;
-
-    //
-    constructor(address _swapRouter) {
-        require(_swapRouter != address(0) && _swapRouter.code.length > 0);
-
-        swapRouter = _swapRouter;
-    }
 
     function filterSwap(
+        address  router,
         bytes memory exchangeData
     ) external payable override returns (uint256) {
         uint256 amountInArr;
@@ -42,6 +35,7 @@ contract UniV2ForkSwap is ISwap {
         );
         return
             swapInputV2(
+                router,
                 amountInArr,
                 amountOutMinArr,
                 pathArr,
@@ -54,6 +48,7 @@ contract UniV2ForkSwap is ISwap {
 
     // v2
     function swapInputV2(
+        address _router,
         uint256 _amountInArr,
         uint256 _amountOutMinArr,
         address[] memory _path,
@@ -64,12 +59,12 @@ contract UniV2ForkSwap is ISwap {
     ) internal returns (uint256) {
         uint[] memory amounts;
         if (_inputAddre == address(0)) {
-            amounts = IUniRouter01(swapRouter).swapExactETHForTokens{
+            amounts = IUniRouter01(_router).swapExactETHForTokens{
                 value: _amountInArr
             }(_amountOutMinArr, _path, _to, _deadLine);
         } else if (_outAddre == address(0)) {
-            TransferHelper.safeApprove(_inputAddre, swapRouter, _amountInArr);
-            amounts = IUniRouter01(address(swapRouter)).swapExactTokensForETH(
+            TransferHelper.safeApprove(_inputAddre, _router, _amountInArr);
+            amounts = IUniRouter01(address(_router)).swapExactTokensForETH(
                 _amountInArr,
                 _amountOutMinArr,
                 _path,
@@ -77,8 +72,8 @@ contract UniV2ForkSwap is ISwap {
                 _deadLine
             );
         } else {
-            TransferHelper.safeApprove(_inputAddre, swapRouter, _amountInArr);
-            amounts = IUniRouter01(address(swapRouter)).swapExactTokensForTokens(
+            TransferHelper.safeApprove(_inputAddre, _router, _amountInArr);
+            amounts = IUniRouter01(address(_router)).swapExactTokensForTokens(
                 _amountInArr,
                 _amountOutMinArr,
                 _path,

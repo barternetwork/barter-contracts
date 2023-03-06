@@ -11,15 +11,10 @@ import "../libs/TransferHelper.sol";
 import "../libs/SafeMath.sol";
 
 contract UniV3ForkSwap is ISwap {
-    address public immutable swapRouter;
 
-    constructor(address _swapRouter) {
-        require(_swapRouter != address(0) && _swapRouter.code.length > 0,"not contract");
-
-        swapRouter = _swapRouter;
-    }
 
     function filterSwap(
+        address router,
         bytes memory exchangeData
     ) external payable override returns (uint256) {
         uint256 amountInArr;
@@ -35,6 +30,7 @@ contract UniV3ForkSwap is ISwap {
             );
         return
             swapInputV3(
+                router,
                 pathArr,
                 to,
                 amountInArr,
@@ -46,6 +42,7 @@ contract UniV3ForkSwap is ISwap {
 
     // V3
     function swapInputV3(
+        address _router,
         bytes memory _path,
         address _recipient,
         uint256 _amountIn,
@@ -56,16 +53,18 @@ contract UniV3ForkSwap is ISwap {
         uint256 amountsv3;
         if (_outAddre == address(0)) {
             amountsv3 = swapExactInputV3(
+                _router,
                 _path,
                 address(this),
                 _amountIn,
                 _amountOutMinArr,
                 _inputAddre
             );
-            IWETH9(getWeth(swapRouter)).withdraw(amountsv3);
+            IWETH9(getWeth(_router)).withdraw(amountsv3);
             TransferHelper.safeTransferETH(_recipient, amountsv3);
         } else {
             amountsv3 = swapExactInputV3(
+                _router,
                 _path,
                 _recipient,
                 _amountIn,
@@ -77,6 +76,7 @@ contract UniV3ForkSwap is ISwap {
     }
 
     function swapExactInputV3(
+        address _router,
         bytes memory _path,
         address _recipient,
         uint256 _amountIn,
@@ -84,7 +84,7 @@ contract UniV3ForkSwap is ISwap {
         address _inputAddre
     ) internal returns (uint amount) {
         if (_inputAddre == address(0)) {
-            amount = IV3SwapRouter(swapRouter).exactInput{value: _amountIn}(
+            amount = IV3SwapRouter(_router).exactInput{value: _amountIn}(
                 IV3SwapRouter.ExactInputParams(
                     _path,
                     _recipient,
@@ -93,9 +93,9 @@ contract UniV3ForkSwap is ISwap {
                 )
             );
         } else {
-            TransferHelper.safeApprove(_inputAddre, swapRouter, _amountIn);
+            TransferHelper.safeApprove(_inputAddre, _router, _amountIn);
 
-            amount = IV3SwapRouter(swapRouter).exactInput(
+            amount = IV3SwapRouter(_router).exactInput(
                 IV3SwapRouter.ExactInputParams(
                     _path,
                     _recipient,

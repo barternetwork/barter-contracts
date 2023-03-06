@@ -50,7 +50,7 @@ describe("UniV3ForkSwap", function () {
 
         let UniV3ForkSwap = await ethers.getContractFactory('UniV3ForkSwap');
 
-        uniV3ForkSwap = await UniV3ForkSwap.deploy(router);
+        uniV3ForkSwap = await UniV3ForkSwap.deploy();
 
         await uniV3ForkSwap.connect(wallet).deployed();
 
@@ -81,7 +81,7 @@ describe("UniV3ForkSwap", function () {
             let data = ethers.utils.defaultAbiCoder.encode(['uint256', 'uint256', 'bytes', 'address', 'address', 'address'], [amountIn, amountOutMin, path, to, inputAddre, outAddre]);
             let usdc = await ethers.getContractAt(ERC20, usdc_addr, wallet);
             let balanceBefore = await usdc.balanceOf(wallet.address);
-            await (await uniV3ForkSwap.connect(_user).filterSwap(data,{value:amountIn})).wait();
+            await (await uniV3ForkSwap.connect(_user).filterSwap(router,data,{value:amountIn})).wait();
             let balanceAfter = await usdc.balanceOf(wallet.address);
 
             expect(balanceAfter).gt(balanceBefore);
@@ -110,7 +110,7 @@ describe("UniV3ForkSwap", function () {
             let balanceBefore = await usdc.balanceOf(wallet.address);
             let dai = await ethers.getContractAt(ERC20, dai_addr, _user);
             await (await dai.transfer(uniV3ForkSwap.address, amountIn)).wait();
-            await (await uniV3ForkSwap.connect(_user).filterSwap(data)).wait();
+            await (await uniV3ForkSwap.connect(_user).filterSwap(router,data)).wait();
             let balanceAfter = await usdc.balanceOf(wallet.address);
 
             expect(balanceAfter).gt(balanceBefore);
@@ -140,7 +140,7 @@ describe("UniV3ForkSwap", function () {
             let balanceBefore = await wallet.getBalance();
             let dai = await ethers.getContractAt(ERC20, dai_addr, _user);
             await (await dai.transfer(uniV3ForkSwap.address, amountIn)).wait();
-            await (await uniV3ForkSwap.connect(_user).filterSwap(data)).wait();
+            await (await uniV3ForkSwap.connect(_user).filterSwap(router,data)).wait();
             let balanceAfter = await wallet.getBalance();
 
             expect(balanceAfter).gt(balanceBefore);

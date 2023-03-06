@@ -50,7 +50,7 @@ describe("UniV2ForkSwap", function () {
 
         let UniV2ForkSwap = await ethers.getContractFactory('UniV2ForkSwap');
 
-        uniV2ForkSwap = await UniV2ForkSwap.deploy(router);
+        uniV2ForkSwap = await UniV2ForkSwap.deploy();
 
         await uniV2ForkSwap.connect(wallet).deployed();
 
@@ -76,7 +76,7 @@ describe("UniV2ForkSwap", function () {
             let data = ethers.utils.defaultAbiCoder.encode(['uint256', 'uint256', 'address[]', 'address', 'uint256', 'address', 'address'], [amountIn, amountOutMin, path, to, deadLines, inputAddre, outAddre]);
             let usdc = await ethers.getContractAt(ERC20, usdc_addr, wallet);
             let balanceBefore = await usdc.balanceOf(wallet.address);
-            await (await uniV2ForkSwap.connect(_user).filterSwap(data, { value: amountIn })).wait();
+            await (await uniV2ForkSwap.connect(_user).filterSwap(router,data, { value: amountIn })).wait();
             let balanceAfter = await usdc.balanceOf(wallet.address);
 
             expect(balanceAfter).gt(balanceBefore);
@@ -100,7 +100,7 @@ describe("UniV2ForkSwap", function () {
             let dai = await ethers.getContractAt(ERC20, dai_addr, _user);
             await (await dai.transfer(uniV2ForkSwap.address, amountIn)).wait();
             let balanceBefore = await usdc.balanceOf(wallet.address);
-            await (await uniV2ForkSwap.connect(_user).filterSwap(data, { value: amountIn })).wait();
+            await (await uniV2ForkSwap.connect(_user).filterSwap(router,data, { value: amountIn })).wait();
             let balanceAfter = await usdc.balanceOf(wallet.address);
 
             expect(balanceAfter).gt(balanceBefore);
@@ -125,7 +125,7 @@ describe("UniV2ForkSwap", function () {
             let dai = await ethers.getContractAt(ERC20, dai_addr, _user);
             await (await dai.transfer(uniV2ForkSwap.address, amountIn)).wait();
             let balanceBefore = await wallet.getBalance();
-            await (await uniV2ForkSwap.connect(_user).filterSwap(data, { value: amountIn })).wait();
+            await (await uniV2ForkSwap.connect(_user).filterSwap(router,data, { value: amountIn })).wait();
             let balanceAfter = await wallet.getBalance();
 
             expect(balanceAfter).gt(balanceBefore);

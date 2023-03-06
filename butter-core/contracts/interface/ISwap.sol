@@ -9,7 +9,7 @@ interface ISwap{
 
 
     // AMMSWAP
-    function filterSwap(bytes memory exchangeData) external payable returns(uint256);
+    function filterSwap(address router,bytes memory exchangeData) external payable returns(uint256);
 
 
     //CurveSwap
