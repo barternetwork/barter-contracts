@@ -56,26 +56,49 @@ describe("ButterCore", function () {
         await butterCore.connect(wallet).deployed();
 
         let CurveForkSwap = await ethers.getContractFactory('CurveForkSwap');
-        let curveForkSwap = await CurveForkSwap.deploy(curve_router);
+        let curveForkSwap = await CurveForkSwap.deploy();
         await curveForkSwap.connect(wallet).deployed();
 
         let UniV2ForkSwap = await ethers.getContractFactory('UniV2ForkSwap');
 
-        let uniV2ForkSwap = await UniV2ForkSwap.deploy(uni_v2_router);
+        let uniV2ForkSwap = await UniV2ForkSwap.deploy();
 
         await uniV2ForkSwap.connect(wallet).deployed();
 
         let UniV3ForkSwap = await ethers.getContractFactory('UniV3ForkSwap');
 
-        let uniV3ForkSwap = await UniV3ForkSwap.deploy(uni_v3_router);
+        let uniV3ForkSwap = await UniV3ForkSwap.deploy();
 
         await uniV3ForkSwap.connect(wallet).deployed();
 
-        await (await butterCore.setRouterAddreAll(1, uniV2ForkSwap.address)).wait();
+        await (await butterCore.setSwapTypeHandle(1, uniV2ForkSwap.address)).wait();
 
-        await (await butterCore.setRouterAddreAll(2, uniV3ForkSwap.address)).wait();
+        await (await butterCore.setSwapTypeHandle(2, uniV3ForkSwap.address)).wait();
 
-        await (await butterCore.setRouterAddreAll(3, curveForkSwap.address)).wait();
+        await (await butterCore.setSwapTypeHandle(3, curveForkSwap.address)).wait();
+        // struct SwapConfig{
+        //     address swapRouter;
+        //     uint256 swapType; // 1 - univ2, 2 - univ3, 3 - curve  
+        // }
+        let config = {
+            swapRouter: uni_v2_router,
+            swapType: 1
+        }
+        await (await butterCore.setSwapConfig(0, config)).wait();
+
+        config = {
+            swapRouter: uni_v3_router,
+            swapType: 2
+        }
+
+        await (await butterCore.setSwapConfig(1, config)).wait();
+
+        config = {
+            swapRouter: curve_router,
+            swapType: 3
+        }
+
+        await (await butterCore.setSwapConfig(2, config)).wait();
     }
 
 
@@ -128,7 +151,7 @@ describe("ButterCore", function () {
             let param = {
                 amountInArr: [amountIn, v3_amountIn, amount],
                 paramsArr: [v2Data, v3_data, curve_data],
-                routerIndex: [1, 2, 3],
+                routerIndex: [0,1, 2],
                 inputOutAddre: [dai_addr, usdc_addr]
             }
             await butterCore.connect(_user).multiSwap(param);
@@ -181,10 +204,10 @@ describe("ButterCore", function () {
             let param = {
                 amountInArr: [amountIn, v3_amountIn, amount],
                 paramsArr: [data, v3_data, curve_data],
-                routerIndex: [1, 2, 3],
+                routerIndex: [0,1,2],
                 inputOutAddre: [ethers.constants.AddressZero, usdc_addr]
             }
-            await (await butterCore.connect(_user).multiSwap(param,{value:ethers.utils.parseEther("6")})).wait();
+            await (await butterCore.connect(_user).multiSwap(param, { value: ethers.utils.parseEther("6") })).wait();
 
             let balanceAfter = await usdc.balanceOf(wallet.address);
 

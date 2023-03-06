@@ -8,15 +8,8 @@ import "../libs/TransferHelper.sol";
 import "../interface/ICurveRouter.sol";
 
 contract CurveForkSwap is ISwap {
-     address public immutable swapRouter;
-
-    constructor(address _swapRouter) {
-       require(_swapRouter != address(0) && _swapRouter.code.length > 0);
-
-        swapRouter = _swapRouter;
-    }
-
     function filterSwap(
+        address router,
         bytes memory exchangeData
     ) external payable override returns (uint256) {
         address inputAddre;
@@ -48,6 +41,7 @@ contract CurveForkSwap is ISwap {
         );
         return
             exchange_Multiples(
+                router,
                 inputAddre,
                 route,
                 swap_params,
@@ -59,6 +53,7 @@ contract CurveForkSwap is ISwap {
     }
 
     function exchange_Multiples(
+        address _router,
         address _inputAddre,
         address[9] memory _route,
         uint256[3][4] memory _swap_params,
@@ -69,7 +64,7 @@ contract CurveForkSwap is ISwap {
     ) internal returns (uint256) {
         if (_inputAddre == address(0)) {
             return
-                ICurveRouter(swapRouter).exchange_multiple{value: _amount}(
+                ICurveRouter(_router).exchange_multiple{value: _amount}(
                     _route,
                     _swap_params,
                     _amount,
@@ -78,9 +73,9 @@ contract CurveForkSwap is ISwap {
                     _receiver
                 );
         } else {
-            TransferHelper.safeApprove(_inputAddre, swapRouter, _amount);
+            TransferHelper.safeApprove(_inputAddre, _router, _amount);
             return
-                ICurveRouter(swapRouter).exchange_multiple(
+                ICurveRouter(_router).exchange_multiple(
                     _route,
                     _swap_params,
                     _amount,

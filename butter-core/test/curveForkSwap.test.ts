@@ -50,7 +50,7 @@ describe("curveForkSwap", function () {
 
         let CurveForkSwap = await ethers.getContractFactory('CurveForkSwap');
 
-        curveForkSwap = await CurveForkSwap.deploy(router);
+        curveForkSwap = await CurveForkSwap.deploy();
         await curveForkSwap.connect(wallet).deployed();
 
     }
@@ -103,7 +103,7 @@ describe("curveForkSwap", function () {
             let balanceBefore = await usdc.balanceOf(wallet.address);
             let dai = await ethers.getContractAt(ERC20, dai_addr, _user);
             await (await dai.transfer(curveForkSwap.address, amount)).wait();
-            await (await curveForkSwap.connect(_user).filterSwap(data)).wait();
+            await (await curveForkSwap.connect(_user).filterSwap(router,data)).wait();
             let balanceAfter = await usdc.balanceOf(wallet.address);
 
             expect(balanceAfter).gt(balanceBefore);
@@ -125,7 +125,7 @@ describe("curveForkSwap", function () {
             let data = ethers.utils.defaultAbiCoder.encode(['address', 'address[9]', 'uint256[3][4]', 'uint256', 'uint256', 'address[4]','address'], [inputAddre, route, swap_params, amount, expected, pools,receiver]);
             let usdc = await ethers.getContractAt(ERC20, usdc_addr, wallet);
             let balanceBefore = await usdc.balanceOf(wallet.address);
-            await (await curveForkSwap.connect(_user).filterSwap(data,{value:amount})).wait();
+            await (await curveForkSwap.connect(_user).filterSwap(router,data,{value:amount})).wait();
             let balanceAfter = await usdc.balanceOf(wallet.address);
 
             expect(balanceAfter).gt(balanceBefore);
