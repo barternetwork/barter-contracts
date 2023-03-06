@@ -10,11 +10,12 @@
 # deps
 artifacts/
 remix-tests/
-
+node_modules/
 
 #artifacts
 artifacts/
 
+.env
 
 #cache
 cache/
