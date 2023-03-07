@@ -30,7 +30,7 @@ async function deploy() {
     await uniV3ForkSwap.connect(wallet).deployed();
     console.log(`uniV3 fork swap handle deployed to ${uniV3ForkSwap.address}`);
     await (await butterCore.setSwapTypeHandle(2, uniV3ForkSwap.address)).wait();
-    if (network.name.indexOf('mainnet') === -1) {
+    if (network.name.indexOf('mainnet') > -1) {
       let CurveForkSwap = await ethers.getContractFactory('CurveForkSwap');
       let curveForkSwap = await CurveForkSwap.deploy();
       await curveForkSwap.connect(wallet).deployed();
