@@ -2,13 +2,16 @@
 pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "../interface/ISwap.sol";
-import "../interface/IERC20.sol";
 import "../interface/IUniRouter01.sol";
-import "../libs/TransferHelper.sol";
-import "../libs/SafeMath.sol";
+
 
 contract UniV2ForkSwap is ISwap {
+    using SafeMath for uint;
+    using SafeERC20 for IERC20;
 
     function filterSwap(
         address  router,
@@ -63,7 +66,7 @@ contract UniV2ForkSwap is ISwap {
                 value: _amountInArr
             }(_amountOutMinArr, _path, _to, _deadLine);
         } else if (_outAddre == address(0)) {
-            TransferHelper.safeApprove(_inputAddre, _router, _amountInArr);
+            IERC20(_inputAddre).safeApprove(_router,_amountInArr);
             amounts = IUniRouter01(address(_router)).swapExactTokensForETH(
                 _amountInArr,
                 _amountOutMinArr,
@@ -72,7 +75,7 @@ contract UniV2ForkSwap is ISwap {
                 _deadLine
             );
         } else {
-            TransferHelper.safeApprove(_inputAddre, _router, _amountInArr);
+            IERC20(_inputAddre).safeApprove(_router,_amountInArr);
             amounts = IUniRouter01(address(_router)).swapExactTokensForTokens(
                 _amountInArr,
                 _amountOutMinArr,
