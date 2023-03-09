@@ -14,7 +14,7 @@ async function deploy() {
   let [wallet] = await ethers.getSigners();
   console.log("deployer address is :", wallet.address);
   const ButterCore = await ethers.getContractFactory("ButterCore");
-  const butterCore = await ButterCore.deploy(wallet.address);
+  const butterCore = await ButterCore.deploy();
   await butterCore.deployed();
   console.log(`butterCore deployed to ${butterCore.address}`);
 

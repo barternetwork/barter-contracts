@@ -52,7 +52,7 @@ describe("ButterCore", function () {
 
         await (await deployer.sendTransaction(tx)).wait();
         let ButterCore = await ethers.getContractFactory('ButterCore');
-        butterCore = await ButterCore.deploy(wallet.address);
+        butterCore = await ButterCore.deploy();
         await butterCore.connect(wallet).deployed();
 
         let CurveForkSwap = await ethers.getContractFactory('CurveForkSwap');
@@ -103,6 +103,25 @@ describe("ButterCore", function () {
 
 
     describe("butterCore", function () {
+        it("butter -> Ownable2Step ", async function () {
+
+            let [wallet, other] = await ethers.getSigners();
+
+            await loadFixture(deployFixture);
+           
+            await expect(butterCore.connect(other).transferOwnership(other.address)).to.be.revertedWith("Ownable: caller is not the owner");
+
+            await (await butterCore.connect(wallet).transferOwnership(other.address)).wait();
+
+            expect(await butterCore.pendingOwner()).eq(other.address);
+
+            expect(butterCore.connect(wallet).acceptOwnership()).to.be.revertedWith("Ownable2Step: caller is not the new owner");
+
+            await (await butterCore.connect(other).acceptOwnership()).wait();
+
+            expect (await butterCore.owner()).eq(other.address);
+           
+        });
 
 
         it("butter -> multiSwap in tokens ", async function () {
