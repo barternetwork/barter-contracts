@@ -3,23 +3,22 @@
 pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
-import "./interface/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/access/Ownable2Step.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./interface/IButterCore.sol";
-import "./libs/TransferHelper.sol";
-import "./libs/SafeMath.sol";
 import "./interface/ISwap.sol";
-import "./libs/Ownable2Step.sol";
 
 contract ButterCore is IButterCore, Ownable2Step {
     using SafeMath for uint;
-
+    using SafeERC20 for IERC20;
 
     mapping(uint256 => SwapConfig) public swapConfigs;
 
     mapping(uint256 => address) public swapTypeHandle; // 1 - univ2, 2 - univ3, 3 - curve
 
-
-    constructor() { }
+    constructor() {}
 
     function multiSwap(
         AccessParams calldata params
@@ -29,8 +28,7 @@ contract ButterCore is IButterCore, Ownable2Step {
         if (params.inputOutAddre[0] == address(0)) {
             require(msg.value == amountInArrs, "Price is wrong");
         } else {
-            TransferHelper.safeTransferFrom(
-                params.inputOutAddre[0],
+            IERC20(params.inputOutAddre[0]).safeTransferFrom(
                 msg.sender,
                 address(this),
                 amountInArrs

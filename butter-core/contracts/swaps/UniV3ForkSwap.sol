@@ -2,16 +2,17 @@
 pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "../interface/ISwap.sol";
-import "../interface/IERC20.sol";
 import "../interface/IUniRouter01.sol";
 import "../interface/IV3SwapRouter.sol";
 import "../interface/IWETH9.sol";
-import "../libs/TransferHelper.sol";
-import "../libs/SafeMath.sol";
 
 contract UniV3ForkSwap is ISwap {
-
+    using SafeMath for uint;
+    using SafeERC20 for IERC20;
 
     function filterSwap(
         address router,
@@ -61,7 +62,7 @@ contract UniV3ForkSwap is ISwap {
                 _inputAddre
             );
             IWETH9(getWeth(_router)).withdraw(amountsv3);
-            TransferHelper.safeTransferETH(_recipient, amountsv3);
+            safeTransferETH(_recipient, amountsv3);
         } else {
             amountsv3 = swapExactInputV3(
                 _router,
@@ -93,8 +94,7 @@ contract UniV3ForkSwap is ISwap {
                 )
             );
         } else {
-            TransferHelper.safeApprove(_inputAddre, _router, _amountIn);
-
+            IERC20(_inputAddre).safeApprove(_router,_amountIn);
             amount = IV3SwapRouter(_router).exactInput(
                 IV3SwapRouter.ExactInputParams(
                     _path,
@@ -110,5 +110,9 @@ contract UniV3ForkSwap is ISwap {
         WETH = IV3SwapRouter(_routerArr).WETH9();
     }
 
+    function safeTransferETH(address to, uint256 value) internal {
+        (bool success, ) = to.call{value: value}(new bytes(0));
+        require(success, 'ETH transfer failed');
+    }
     receive() external payable {}
 }

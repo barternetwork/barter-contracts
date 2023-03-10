@@ -2,12 +2,15 @@
 pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
-import "../interface/ISwap.sol";
-import "../interface/IERC20.sol";
-import "../libs/TransferHelper.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "../interface/ICurveRouter.sol";
+import "../interface/ISwap.sol";
 
 contract CurveForkSwap is ISwap {
+    using SafeERC20 for IERC20;
+
+
     function filterSwap(
         address router,
         bytes memory exchangeData
@@ -73,7 +76,7 @@ contract CurveForkSwap is ISwap {
                     _receiver
                 );
         } else {
-            TransferHelper.safeApprove(_inputAddre, _router, _amount);
+            IERC20(_inputAddre).safeApprove(_router,_amount);
             return
                 ICurveRouter(_router).exchange_multiple(
                     _route,
