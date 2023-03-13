@@ -11,6 +11,7 @@
 artifacts/
 remix-tests/
 node_modules/
+deployments/
 
 #artifacts
 artifacts/
