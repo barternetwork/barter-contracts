@@ -5,6 +5,7 @@ import "@nomiclabs/hardhat-waffle";
 import 'hardhat-deploy';
 import "hardhat-gas-reporter";
 import "solidity-coverage";
+require('./tasks')
 
 dotenv.config();
 
