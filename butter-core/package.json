@@ -1,7 +1,7 @@
 {
-  "name": "bsc_light_node",
-  "version": "0.0.1",
-  "description": "bsc light node in the solidity implementation",
+  "name": "ButterCore",
+  "version": "0.1.0",
+  "description": "Butter core contracts in the solidity implementation",
   "dependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^1.0.2",
     "@openzeppelin/contracts": "^4.8.2",

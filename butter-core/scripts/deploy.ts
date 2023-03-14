@@ -24,20 +24,7 @@ async function deploy() {
   console.log(`uniV2 fork swap handle deployed to ${uniV2ForkSwap.address}`);
   await (await butterCore.setSwapTypeHandle(1, uniV2ForkSwap.address)).wait();
 
-  if (network.name.indexOf('bsc') === -1) { // eth  or matic
-    let UniV3ForkSwap = await ethers.getContractFactory('UniV3ForkSwap');
-    let uniV3ForkSwap = await UniV3ForkSwap.deploy();
-    await uniV3ForkSwap.connect(wallet).deployed();
-    console.log(`uniV3 fork swap handle deployed to ${uniV3ForkSwap.address}`);
-    await (await butterCore.setSwapTypeHandle(2, uniV3ForkSwap.address)).wait();
-    if (network.name.indexOf('mainnet') > -1) {
-      let CurveForkSwap = await ethers.getContractFactory('CurveForkSwap');
-      let curveForkSwap = await CurveForkSwap.deploy();
-      await curveForkSwap.connect(wallet).deployed();
-      console.log(`curve fork swap handle deployed to ${curveForkSwap.address}`);
-      await (await butterCore.setSwapTypeHandle(3, curveForkSwap.address)).wait();
-    }
-  }
+
 
   let swaps = getSwaps(network.name);
   if (swaps.length == 0) {
