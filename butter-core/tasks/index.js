@@ -145,6 +145,75 @@ task("setSwapTypeHandle",
 
     })
 
+task("setSwapTypeHandleSingle",
+    "setSwapTypeHandle"
+)
+    .addParam("type", "swap type")
+    .setAction(async (taskArgs, hre) => {
+        const { deployments, getNamedAccounts, ethers } = hre;
+        const { deploy } = deployments;
+        const { deployer } = await getNamedAccounts();
+
+        console.log("deployer :", deployer)
+
+        let ButterCore;
+        try {
+            ButterCore = await deployments.get("ButterCore");
+        } catch (error) {
+
+        }
+
+        let Core = await ethers.getContractFactory("ButterCore");
+        if (!ButterCore) {
+            ButterCore = await deploy('ButterCore', {
+                from: deployer,
+                args: [],
+                log: true,
+                contract: 'ButterCore'
+            })
+        }
+        let core = Core.attach(ButterCore.address);
+        console.log("butterCore address :", ButterCore.address);
+        if (taskArgs.type == 1) {
+            let UniV2ForkSwap = await deployments.get("UniV2ForkSwap");
+
+            if (UniV2ForkSwap) {
+                await (await core.setSwapTypeHandle(1, UniV2ForkSwap.address)).wait();
+                console.log("setSwapTypeHandle UniV2ForkSwap");
+            }
+        } else if (taskArgs.type == 2) {
+            let UniV3ForkSwap;
+
+            try {
+                UniV3ForkSwap = await deployments.get("UniV3ForkSwap");
+            } catch (error) {
+
+            }
+
+            if (UniV3ForkSwap) {
+                await (await core.setSwapTypeHandle(2, UniV3ForkSwap.address)).wait();
+                console.log("setSwapTypeHandle UniV3ForkSwap");
+            }
+        } else if (taskArgs.type == 3) {
+            let CurveForkSwap;
+
+            try {
+                CurveForkSwap = await deployments.get("CurveForkSwap");
+            } catch (error) {
+
+            }
+
+            if (CurveForkSwap) {
+                await (await core.setSwapTypeHandle(3, CurveForkSwap.address)).wait();
+                console.log("setSwapTypeHandle CurveForkSwap");
+            }
+        } else {
+
+            console.log("Unsupported type")
+        }
+
+    })
+
 task("setSwapConfig",
     "setSwapConfig"
 )
@@ -173,8 +242,7 @@ task("setSwapConfig",
         let core = Core.attach(ButterCore.address);
         console.log("butterCore address :", ButterCore.address);
         let swaps = getSwaps(network.name);
-        if (swaps && swaps.length > 0)
-
+        if (swaps && swaps.length > 0) {
             for (let i = 0; i < swaps.length; i++) {
                 let swap = swaps[i];
                 let config = {
@@ -184,5 +252,55 @@ task("setSwapConfig",
                 await (await core.setSwapConfig(swap.index, config)).wait();
                 console.log(`set index ${swap.index} for ${swap.name}`);
             }
+        }
+
+
+
+    })
+
+task("setSwapConfigSingle",
+    "setSwapConfig"
+)
+    .addParam("index", "swap index")
+    .addParam("type", "swap type")
+    .addParam("router", "swap router address")
+    .setAction(async (taskArgs, hre) => {
+        const { deployments, getNamedAccounts, ethers, network } = hre;
+        const { deploy } = deployments;
+        const { deployer } = await getNamedAccounts();
+
+        console.log("deployer :", deployer)
+
+        let ButterCore;
+        try {
+            ButterCore = await deployments.get("ButterCore");
+        } catch (error) {
+
+        }
+        let Core = await ethers.getContractFactory("ButterCore");
+        if (!ButterCore) {
+            ButterCore = await deploy('ButterCore', {
+                from: deployer,
+                args: [],
+                log: true,
+                contract: 'ButterCore'
+            })
+        }
+        let core = Core.attach(ButterCore.address);
+        console.log("butterCore address :", ButterCore.address);
+
+
+
+        let config = {
+            swapRouter: taskArgs.router,
+            swapType: taskArgs.type
+        }
+        let result = await (await core.setSwapConfig(taskArgs.index, config)).wait();
+
+        if (result.status === 1) {
+            console.log("set succeed")
+        } else {
+            console.log("set failed")
+        }
 
     })

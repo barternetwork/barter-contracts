@@ -6,34 +6,44 @@ readme
 npx hardhat deployCore --network <network>
 ```
 
-2.
-
-deploy UniV2ForkSwap (按照需要部署)
+deploy UniV2ForkSwap
 
 ```
 npx hardhat deployUniV2ForkSwap --network <network>
 ```
 
-deploy deployUniV3ForkSwap(按照需要部署)
+deploy deployUniV3ForkSwap
 
 ```
 npx hardhat deployUniV3ForkSwap --network <network>
 ```
 
-deploy deployCurveForkSwap(按照需要部署)
+deploy deployCurveForkSwap
 
 ```
 npx hardhat deployCurveForkSwap --network <network>
 ```
 
-3.setSwapTypeHandle （这一部会根据上一步部署的swapFork来添加未部署的就不会添加）
+3.setSwapTypeHandle （This one adds the undeployed swapFork based on the previous deployment）
 
 ```
 npx hardhat setSwapTypeHandle --network <network>
 ```
 
-4.setSwapConfig  这一部会根据config文件配置的内容设置
+4.setSwapConfig  (This section is based on the configuration in the config file)
 
 ```
 npx hardhat setSwapConfig --network <network>
+```
+
+5.setSwapTypeHandleSingle   type 1 - univ2  2 - univ3 3 - curve
+
+```
+npx hardhat setSwapTypeHandleSingle --type <type> --network <network>
+```
+
+4.setSwapConfigSingle  type   index   router - the router address of dex  index start from 0
+
+```
+npx hardhat setSwapConfigSingle --index <index> --type <type> --router <router> --network <network>
 ```
