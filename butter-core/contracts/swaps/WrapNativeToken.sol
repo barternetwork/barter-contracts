@@ -17,6 +17,7 @@ contract WrapNativeToken {
     }
 
     function ethToWeth(uint256 amountin, address _to) public payable {
+        require(amountin > 0 && _to != address(0),"invalid input");
         require(msg.value == amountin, "Price is wrong");
         IWETH9(WToken).deposit{value: amountin}();
         SafeERC20.safeTransfer(IWETH9(WToken), _to, amountin);
